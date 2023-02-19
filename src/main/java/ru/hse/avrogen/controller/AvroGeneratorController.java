@@ -28,4 +28,10 @@ public class AvroGeneratorController {
     public Uni<List<String>> getAvroSchemas() {
         return avroCRUDService.getAvroSchemas();
     }
+
+    @GET
+    @Path("/getSubjects")
+    public Uni<List<String>> getSubjects() {
+        return avroCRUDService.getSubjects();
+    }
 }
