@@ -33,6 +33,12 @@
 
   <dependencies>
 
+    <!-- Apache Avro -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-avro</artifactId>
+    </dependency>
+
     <!-- OpenAPI -->
     <dependency>
       <groupId>io.quarkus</groupId>
