@@ -21,7 +21,7 @@ import java.util.List;
 import static ru.hse.avrogen.constants.registry.ConfluentSchemaRegistryApiConstants.*;
 
 @ApplicationScoped
-public class ApicurioSchemaRegistryClient {
+public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
     private final Logger logger;
     private final WebClient client;
     private final UriBuilder apicurioUriBuilder;
@@ -45,15 +45,16 @@ public class ApicurioSchemaRegistryClient {
             .flatMap(this::mapGetSubjectsResult);
     }
 
-    public Uni<Void> createSchema(String subjectName, Schema newAvroSchema) {
+    public Uni<Void> createSchema(String subjectName, Schema newSchema) {
 
         return client
             .postAbs(apicurioUriBuilder.build(String.format(SCHEMA_CREATION_URL, subjectName)).toString())
-            .sendBuffer(Buffer.buffer(newAvroSchema.toString()))
+            .sendBuffer(Buffer.buffer(newSchema.toString()))
             .flatMap(this::mapPostSchemaResponse);
     }
 
     private <T> Uni<Void> mapPostSchemaResponse(HttpResponse<? super T> response) {
+        logger.info(response.bodyAsString());
         if (response.statusCode() == 200) {
 
         }
