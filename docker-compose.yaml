@@ -2,6 +2,6 @@ version: "3.6"
 
 services:
   apicurio:
-    image: apicurio/apicurio-registry-mem:2.2.4.Final
+    image: apicurio/apicurio-registry-mem:2.4.1.Final
     ports:
       - "9091:8080"

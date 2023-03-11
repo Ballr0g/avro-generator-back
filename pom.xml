@@ -33,6 +33,12 @@
 
   <dependencies>
 
+    <!-- Apache Avro -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-avro</artifactId>
+    </dependency>
+
     <!-- OpenAPI -->
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -74,6 +80,15 @@
       <artifactId>rest-assured</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <!-- TestContainers -->
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+      <version>1.17.6</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
