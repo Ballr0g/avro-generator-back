@@ -1,0 +1,26 @@
+# Direct handles to Apicurio, requires docker compose up to work.
+
+GET http://localhost:9091/apis/ccompat/v6/subjects
+
+###
+POST http://localhost:9091/apis/ccompat/v6/subjects/666/versions
+Content-Type: application/json
+
+{
+  "schema": "{ \"type\": \"record\", \"name\": \"test\", \"fields\": [ { \"type\": \"string\", \"name\": \"field\" }, { \"type\": \"int\", \"name\": \"field2\" } ] }"
+}
+
+###
+# Get all available subjects for Apicurio Registry.
+
+GET http://localhost:8080/avroGenerator/v1/getSubjects
+Content-Type: application/json
+
+###
+POST http://localhost:8080/avroGenerator/v1/createSchema
+Content-Type: application/json
+
+{
+  "subjectName": "666",
+  "schema": "{ \"type\": \"record\", \"name\": \"test\", \"fields\": [ { \"type\": \"string\", \"name\": \"field\" }, { \"type\": \"int\", \"name\": \"field2\" } ] }"
+}
