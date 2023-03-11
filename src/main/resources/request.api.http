@@ -1,8 +1,17 @@
 # Direct handles to Apicurio, requires docker compose up to work.
 
+# List all available subjects.
+
 GET http://localhost:9091/apis/ccompat/v6/subjects
 
 ###
+# List all versions under a specific subject.
+
+GET http://localhost:9091/apis/ccompat/v6/subjects/666/versions
+
+###
+# Add a new schema under the specified subject.
+
 POST http://localhost:9091/apis/ccompat/v6/subjects/666/versions
 Content-Type: application/json
 
@@ -11,12 +20,18 @@ Content-Type: application/json
 }
 
 ###
-# Get all available subjects for Apicurio Registry.
+# List all available subjects.
 
 GET http://localhost:8080/avroGenerator/v1/getSubjects
-Content-Type: application/json
 
 ###
+# List all versions under a specific subject.
+
+GET http://localhost:8080/avroGenerator/v1/getSchemaVersions?subject=666
+
+###
+# Add a new schema under the specified subject.
+
 POST http://localhost:8080/avroGenerator/v1/createSchema
 Content-Type: application/json
 
