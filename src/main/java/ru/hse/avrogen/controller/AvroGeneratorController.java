@@ -1,6 +1,7 @@
 package ru.hse.avrogen.controller;
 
 import io.smallrye.mutiny.Uni;
+import org.jboss.resteasy.reactive.RestQuery;
 import ru.hse.avrogen.dto.GetSqlToAvroDto;
 import ru.hse.avrogen.dto.PostCreateSchemaBodyDto;
 import ru.hse.avrogen.dto.PostSchemaResponseDto;
@@ -29,9 +30,10 @@ public class AvroGeneratorController {
     }
 
     @GET
-    @Path("/getSchemas")
-    public Uni<List<String>> getAvroSchemas() {
-        return avroCRUDService.getAvroSchemas();
+    @Path("/getSchemaVersions")
+    // Todo: change to another API format?
+    public Uni<List<Integer>> getAvroSchemas(@RestQuery String subject) {
+        return avroCRUDService.getSchemasBySubject(subject);
     }
 
     @GET

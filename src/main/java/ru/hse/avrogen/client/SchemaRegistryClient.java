@@ -8,7 +8,7 @@ import java.util.List;
 public interface SchemaRegistryClient {
     // Lists all subject names as strings.
     Uni<List<String>> getSubjects();
-    Uni<List<Integer>> getSchemasBySubject(String subjectName);
+    Uni<List<Integer>> getSchemaVersionsBySubject(String subjectName);
 
     Uni<List<Integer>> getSchemaVersion(String subjectName, Long version);
 
