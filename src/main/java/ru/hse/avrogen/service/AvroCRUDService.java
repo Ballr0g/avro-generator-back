@@ -2,6 +2,7 @@ package ru.hse.avrogen.service;
 
 import io.smallrye.mutiny.Uni;
 import ru.hse.avrogen.client.SchemaRegistryClient;
+import ru.hse.avrogen.dto.PostSchemaResponseDto;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -21,7 +22,8 @@ public class AvroCRUDService {
         return apicurioSchemaRegistryClient.getSubjects();
     }
 
-    public void createSchema(String subjectName, String schema) {
-
+    public Uni<PostSchemaResponseDto> createSchema(String subjectName, String schema) {
+        // Parser: parse schema format.
+        return apicurioSchemaRegistryClient.createSchema(subjectName, schema);
     }
 }

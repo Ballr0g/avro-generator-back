@@ -1,6 +1,9 @@
 package ru.hse.avrogen.util.exceptions;
 
 public class ApicurioClientException extends RuntimeException {
+
+    // Todo: static factory method with string format.
+
     public ApicurioClientException() {
     }
 

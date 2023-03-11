@@ -67,6 +67,11 @@
       <artifactId>smallrye-mutiny-vertx-web-client</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-resteasy-reactive-jackson</artifactId>
+    </dependency>
+
     <!-- JUnit 5 -->
     <dependency>
       <groupId>io.quarkus</groupId>
