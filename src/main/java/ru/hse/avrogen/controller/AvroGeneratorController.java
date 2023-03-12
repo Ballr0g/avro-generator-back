@@ -5,6 +5,7 @@ import org.jboss.resteasy.reactive.RestQuery;
 import ru.hse.avrogen.dto.GetSqlToAvroDto;
 import ru.hse.avrogen.dto.PostCreateSchemaBodyDto;
 import ru.hse.avrogen.dto.PostSchemaResponseDto;
+import ru.hse.avrogen.dto.SchemaSubjectInfoDto;
 import ru.hse.avrogen.service.AvroCRUDService;
 import ru.hse.avrogen.service.SqlToAvroService;
 
@@ -44,7 +45,20 @@ public class AvroGeneratorController {
 
     @GET
     @Path("/sqlToAvro")
-    public Uni<GetSqlToAvroDto> getAvroSchemaBySql(String sql) {
+    public Uni<GetSqlToAvroDto> getAvroSchemaFromSql(String sql) {
         return sqlToAvroService.convertSqlToAvro(sql);
+    }
+
+    @DELETE
+    @Path("/deleteSubject")
+    public Uni<List<Integer>> deleteSubject(SchemaSubjectInfoDto schemaSubjectInfoDto) {
+        return avroCRUDService.deleteSubject(schemaSubjectInfoDto.subjectName());
+    }
+
+    @DELETE
+    @Path("/deleteSchema")
+    public Uni<Integer> deleteSchemaVersion(SchemaSubjectInfoDto schemaSubjectInfoDto) {
+        return avroCRUDService.deleteSchemaVersion(schemaSubjectInfoDto.subjectName(),
+                schemaSubjectInfoDto.schemaVersion());
     }
 }

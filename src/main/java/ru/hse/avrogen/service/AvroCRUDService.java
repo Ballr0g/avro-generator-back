@@ -27,7 +27,17 @@ public class AvroCRUDService {
     }
 
     public Uni<PostSchemaResponseDto> createSchema(String subjectName, String schema) {
-        // Parser: parse schema format.
+        // SchemaParser: parse schema format.
+        // SchemaDiscoveryService: check if schema already exists.
         return apicurioSchemaRegistryClient.createSchema(subjectName, schema);
+    }
+
+    public Uni<List<Integer>> deleteSubject(String subjectName) {
+        return apicurioSchemaRegistryClient.deleteSubject(subjectName);
+    }
+
+    public Uni<Integer> deleteSchemaVersion(String subjectName, String schemaVersion) {
+        // Validator: check schema version format.
+        return apicurioSchemaRegistryClient.deleteVersion(subjectName, schemaVersion);
     }
 }
