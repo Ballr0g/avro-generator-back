@@ -58,7 +58,7 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
     }
 
     @Override
-    public Uni<List<Integer>> getSchemaVersion(String subjectName, Long version) {
+    public Uni<List<Integer>> getSchemaVersion(String subjectName, Integer version) {
         throw new NotImplementedYet();
     }
 
@@ -72,7 +72,6 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
 
     @Override
     public Uni<List<Integer>> deleteSubject(String subjectName) {
-        logger.info(deleteSubjectUriBuilder.build(subjectName).toString());
         return client
                 .deleteAbs(deleteSubjectUriBuilder.build(subjectName).toString())
                 .send()
@@ -80,12 +79,11 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
     }
 
     @Override
-    public Uni<Integer> deleteVersion(String subjectId, Long version) {
+    public Uni<Integer> deleteVersion(String subjectId, Integer version) {
         throw new NotImplementedYet();
     }
 
     private <T> Uni<PostSchemaResponseDto> mapPostSchemaResponse(HttpResponse<? super T> response, String subjectName) {
-        logger.info(response.bodyAsString());
         if (response.statusCode() == 200) {
             final var creationResultDto = new PostSchemaResponseDto(response.bodyAsJsonObject().getInteger("id"));
             logger.info(String.format("Successfully created schema with id %d under subject %s",
