@@ -49,3 +49,14 @@ Content-Type: application/json
 {
   "subjectName": "666"
 }
+
+###
+# Delete schema version under the specified subject.
+
+DELETE http://localhost:8080/avroGenerator/v1/deleteSchema
+Content-Type: application/json
+
+{
+  "subjectName": "666",
+  "schemaVersion": "1"
+}
