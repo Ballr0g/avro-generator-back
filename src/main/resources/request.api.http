@@ -32,7 +32,7 @@ GET http://localhost:8080/avroGenerator/v1/getSubjects
 ###
 # List all versions under a specific subject.
 
-GET http://localhost:8080/avroGenerator/v1/getSchemaVersions?subject=666
+GET http://localhost:8080/avroGenerator/v1/getSchemaVersions/666
 
 ###
 # Get schema by subject and version.
@@ -47,7 +47,7 @@ Content-Type: application/json
 
 {
   "subjectName": "666",
-  "schema": "{ \"type\": \"record\", \"name\": \"test\", \"fields\": [ { \"type\": \"string\", \"name\": \"field2\" }, { \"type\": \"int\", \"name\": \"field3\" } ] }"
+  "schema": "{ \"type\": \"record\", \"name\": \"test\", \"fields\": [ { \"type\": \"string\", \"name\": \"field1\" }, { \"type\": \"int\", \"name\": \"field2\" } ] }"
 }
 
 ###
