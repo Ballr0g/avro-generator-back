@@ -36,6 +36,16 @@ POST http://localhost:8080/avroGenerator/v1/createSchema
 Content-Type: application/json
 
 {
-  "subjectName": "666",
-  "schema": "{ \"type\": \"record\", \"name\": \"test\", \"fields\": [ { \"type\": \"string\", \"name\": \"field\" }, { \"type\": \"int\", \"name\": \"field2\" } ] }"
+  "subjectName": "667",
+  "schema": "{ \"type\": \"record\", \"name\": \"test\", \"fields\": [ { \"type\": \"string\", \"name\": \"field2\" }, { \"type\": \"int\", \"name\": \"field3\" } ] }"
+}
+
+###
+# Delete all schemas under the specified subject.
+
+DELETE http://localhost:8080/avroGenerator/v1/deleteSubject
+Content-Type: application/json
+
+{
+  "subjectName": "666"
 }
