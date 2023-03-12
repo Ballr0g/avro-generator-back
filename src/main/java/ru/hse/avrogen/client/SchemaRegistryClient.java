@@ -13,7 +13,7 @@ public interface SchemaRegistryClient {
     Uni<List<Integer>> getSchemaVersion(String subjectName, Long version);
 
     // Returns result for creating a specific version under the subject.
-    // Used to differenciate for frontend
+    // Used to differentiate for frontend
     Uni<PostSchemaResponseDto> createSchema(String subjectName, String newSchema);
 
     // Deletes all the versions of a specified schema.
