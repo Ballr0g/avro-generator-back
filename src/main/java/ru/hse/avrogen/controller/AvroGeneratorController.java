@@ -1,11 +1,8 @@
 package ru.hse.avrogen.controller;
 
 import io.smallrye.mutiny.Uni;
-import org.jboss.resteasy.reactive.RestQuery;
-import ru.hse.avrogen.dto.GetSqlToAvroDto;
-import ru.hse.avrogen.dto.PostCreateSchemaBodyDto;
-import ru.hse.avrogen.dto.PostSchemaResponseDto;
-import ru.hse.avrogen.dto.SchemaSubjectInfoDto;
+import org.jboss.resteasy.reactive.RestPath;
+import ru.hse.avrogen.dto.*;
 import ru.hse.avrogen.service.AvroCRUDService;
 import ru.hse.avrogen.service.SqlToAvroService;
 
@@ -31,10 +28,9 @@ public class AvroGeneratorController {
     }
 
     @GET
-    @Path("/getSchemaVersions")
-    // Todo: change to another API format?
-    public Uni<List<Integer>> getAvroSchemas(@RestQuery String subject) {
-        return avroCRUDService.getSchemasBySubject(subject);
+    @Path("/getSchemaVersions/{subjectName}")
+    public Uni<List<Integer>> getAvroSchemaVersions(@RestPath String subjectName) {
+        return avroCRUDService.getSchemasBySubject(subjectName);
     }
 
     @GET
@@ -43,6 +39,13 @@ public class AvroGeneratorController {
         return avroCRUDService.getSubjects();
     }
 
+    @GET
+    @Path("/getSchema/{subjectName}/{schemaVersion}")
+    public Uni<GetSchemaInfoDto> getSchemaByVersion(@RestPath String subjectName, @RestPath String schemaVersion) {
+        return avroCRUDService.getAvroSchemas(subjectName, schemaVersion);
+    }
+
+    // Todo: is this actually a GET endpoint?
     @GET
     @Path("/sqlToAvro")
     public Uni<GetSqlToAvroDto> getAvroSchemaFromSql(String sql) {

@@ -1,6 +1,7 @@
 package ru.hse.avrogen.client;
 
 import io.smallrye.mutiny.Uni;
+import ru.hse.avrogen.dto.GetSchemaInfoDto;
 import ru.hse.avrogen.dto.PostSchemaResponseDto;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public interface SchemaRegistryClient {
     Uni<List<String>> getSubjects();
     Uni<List<Integer>> getSchemaVersionsBySubject(String subjectName);
 
-    Uni<List<Integer>> getSchemaVersion(String subjectName, String version);
+    Uni<GetSchemaInfoDto> getSchemaByVersion(String subjectName, String version);
 
     // Returns result for creating a specific version under the subject.
     // Used to differentiate for frontend

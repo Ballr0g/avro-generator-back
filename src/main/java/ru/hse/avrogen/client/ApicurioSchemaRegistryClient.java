@@ -11,11 +11,12 @@ import io.vertx.mutiny.ext.web.client.HttpResponse;
 import io.vertx.mutiny.ext.web.client.WebClient;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
-import org.jboss.resteasy.reactive.common.NotImplementedYet;
+import ru.hse.avrogen.dto.GetSchemaInfoDto;
 import ru.hse.avrogen.dto.PostSchemaResponseDto;
 import ru.hse.avrogen.util.exceptions.ApicurioClientException;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static ru.hse.avrogen.constants.registry.ConfluentSchemaRegistryApiConstants.*;
@@ -26,6 +27,7 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
     private final WebClient client;
     private final UriBuilder getSubjectsUriBuilder;
     private final UriBuilder getSchemasBySubjectUriBuilder;
+    private final UriBuilder getSchemaOfVersionUriBuilder;
     private final UriBuilder postNewSchemaUriBuilder;
     private final UriBuilder deleteSubjectUriBuilder;
     private final UriBuilder deleteSchemaUriBuilder;
@@ -38,6 +40,7 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
 
         getSubjectsUriBuilder = UriBuilder.fromUri(schemaRegistryUrl + SUBJECTS_URL);
         getSchemasBySubjectUriBuilder = UriBuilder.fromUri(schemaRegistryUrl + SCHEMA_VERSIONS_URL);
+        getSchemaOfVersionUriBuilder = UriBuilder.fromUri(schemaRegistryUrl + SCHEMA_GET_URL);
         postNewSchemaUriBuilder = UriBuilder.fromUri(schemaRegistryUrl + SCHEMA_CREATION_URL);
         deleteSubjectUriBuilder = UriBuilder.fromUri(schemaRegistryUrl + SUBJECTS_DELETION_URL);
         deleteSchemaUriBuilder = UriBuilder.fromUri(schemaRegistryUrl + SCHEMAS_DELETION_URL);
@@ -60,8 +63,11 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
     }
 
     @Override
-    public Uni<List<Integer>> getSchemaVersion(String subjectName, String version) {
-        throw new NotImplementedYet();
+    public Uni<GetSchemaInfoDto> getSchemaByVersion(String subjectName, String version) {
+        return client
+                .getAbs(getSchemaOfVersionUriBuilder.build(subjectName, version).toString())
+                .send()
+                .flatMap(response -> mapGetSchemaResult(response, subjectName, version));
     }
 
     @Override
@@ -125,6 +131,29 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
         logger.warn("Error: unable to retrieve schema versions from "
                 + getSchemasBySubjectUriBuilder.build(subjectName).toString());
         final var errorMessage = String.format("Error on retrieving schema versions: %d, cause by: %s",
+                response.statusCode(), response.statusMessage());
+        return Uni.createFrom().failure(new ApicurioClientException(errorMessage));
+    }
+
+    private <T> Uni<GetSchemaInfoDto> mapGetSchemaResult(HttpResponse<? super T> response,
+                                                              String subjectName, String schemaVersion) {
+        if (response.statusCode() == 200) {
+            final var getSchemaResponseJson = response.bodyAsJsonObject();
+            final var getSchemaResponse = new GetSchemaInfoDto(
+                    getSchemaResponseJson.getInteger("id"),
+                    getSchemaResponseJson.getString("subject"),
+                    getSchemaResponseJson.getInteger("version"),
+                    getSchemaResponseJson.getString("schema"),
+                    Collections.emptyList()
+            );
+            logger.info(String.format("Successfully received schema version %s for subject %s",
+                    schemaVersion, subjectName));
+            return Uni.createFrom().item(getSchemaResponse);
+        }
+
+        logger.warn("Error: unable to get schema for request "
+                + getSchemaOfVersionUriBuilder.build(subjectName, schemaVersion).toString());
+        final var errorMessage = String.format("Error on retrieving schema version: %d, caused by: %s",
                 response.statusCode(), response.statusMessage());
         return Uni.createFrom().failure(new ApicurioClientException(errorMessage));
     }
