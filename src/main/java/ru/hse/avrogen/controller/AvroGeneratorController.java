@@ -45,13 +45,20 @@ public class AvroGeneratorController {
 
     @GET
     @Path("/sqlToAvro")
-    public Uni<GetSqlToAvroDto> getAvroSchemaBySql(String sql) {
+    public Uni<GetSqlToAvroDto> getAvroSchemaFromSql(String sql) {
         return sqlToAvroService.convertSqlToAvro(sql);
     }
 
     @DELETE
     @Path("/deleteSubject")
-    public Uni<List<Integer>> deleteSubject(SchemaSubjectInfoDto subjectDto) {
-        return avroCRUDService.deleteSubject(subjectDto.subjectName());
+    public Uni<List<Integer>> deleteSubject(SchemaSubjectInfoDto schemaSubjectInfoDto) {
+        return avroCRUDService.deleteSubject(schemaSubjectInfoDto.subjectName());
+    }
+
+    @DELETE
+    @Path("/deleteSchema")
+    public Uni<Integer> deleteSchemaVersion(SchemaSubjectInfoDto schemaSubjectInfoDto) {
+        return avroCRUDService.deleteSchemaVersion(schemaSubjectInfoDto.subjectName(),
+                schemaSubjectInfoDto.schemaVersion());
     }
 }

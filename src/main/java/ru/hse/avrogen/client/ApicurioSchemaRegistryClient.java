@@ -28,6 +28,7 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
     private final UriBuilder getSchemasBySubjectUriBuilder;
     private final UriBuilder postNewSchemaUriBuilder;
     private final UriBuilder deleteSubjectUriBuilder;
+    private final UriBuilder deleteSchemaUriBuilder;
 
     @Inject
     public ApicurioSchemaRegistryClient(Logger logger, Vertx vertx,
@@ -39,6 +40,7 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
         getSchemasBySubjectUriBuilder = UriBuilder.fromUri(schemaRegistryUrl + SCHEMA_VERSIONS_URL);
         postNewSchemaUriBuilder = UriBuilder.fromUri(schemaRegistryUrl + SCHEMA_CREATION_URL);
         deleteSubjectUriBuilder = UriBuilder.fromUri(schemaRegistryUrl + SUBJECTS_DELETION_URL);
+        deleteSchemaUriBuilder = UriBuilder.fromUri(schemaRegistryUrl + SCHEMAS_DELETION_URL);
     }
 
     @Override
@@ -58,7 +60,7 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
     }
 
     @Override
-    public Uni<List<Integer>> getSchemaVersion(String subjectName, Integer version) {
+    public Uni<List<Integer>> getSchemaVersion(String subjectName, String version) {
         throw new NotImplementedYet();
     }
 
@@ -79,8 +81,11 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
     }
 
     @Override
-    public Uni<Integer> deleteVersion(String subjectId, Integer version) {
-        throw new NotImplementedYet();
+    public Uni<Integer> deleteVersion(String subjectId, String version) {
+        return client
+                .deleteAbs(deleteSchemaUriBuilder.build(subjectId, version).toString())
+                .send()
+                .flatMap(response -> mapDeleteSchemaResult(response, subjectId, version));
     }
 
     private <T> Uni<PostSchemaResponseDto> mapPostSchemaResponse(HttpResponse<? super T> response, String subjectName) {
@@ -134,6 +139,21 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
         logger.warn("Error: unable to delete subject by calling "
                 + deleteSubjectUriBuilder.build(subjectName).toString());
         final var errorMessage = String.format("Error on deleting subject: %d, caused by: %s",
+                response.statusCode(), response.statusMessage());
+        return Uni.createFrom().failure(new ApicurioClientException(errorMessage));
+    }
+
+    private <T> Uni<Integer> mapDeleteSchemaResult(HttpResponse<? super T> response,
+                                                         String subjectName, String schemaVersion) {
+        if (response.statusCode() == 200) {
+            var deletedSchemaVersion = response.bodyAsJson(Integer.class);
+            logger.info(String.format("Successfully deleted schema version %d", deletedSchemaVersion));
+            return Uni.createFrom().item(deletedSchemaVersion);
+        }
+
+        logger.warn("Error: unable to delete schema by calling "
+                + deleteSchemaUriBuilder.build(subjectName, schemaVersion).toString());
+        final var errorMessage = String.format("Error on deleting schema version: %d, caused by: %s",
                 response.statusCode(), response.statusMessage());
         return Uni.createFrom().failure(new ApicurioClientException(errorMessage));
     }

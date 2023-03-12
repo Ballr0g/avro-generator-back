@@ -10,7 +10,7 @@ public interface SchemaRegistryClient {
     Uni<List<String>> getSubjects();
     Uni<List<Integer>> getSchemaVersionsBySubject(String subjectName);
 
-    Uni<List<Integer>> getSchemaVersion(String subjectName, Integer version);
+    Uni<List<Integer>> getSchemaVersion(String subjectName, String version);
 
     // Returns result for creating a specific version under the subject.
     // Used to differentiate for frontend
@@ -20,5 +20,5 @@ public interface SchemaRegistryClient {
     Uni<List<Integer>> deleteSubject(String subjectName);
 
     // Deletes a specific version within the subject.
-    Uni<Integer> deleteVersion(String subjectId, Integer version);
+    Uni<Integer> deleteVersion(String subjectId, String version);
 }
