@@ -22,6 +22,10 @@ public class AvroCRUDService {
         return apicurioSchemaRegistryClient.getSubjects();
     }
 
+    public Uni<List<Integer>> getSchemasBySubject(String subjectName) {
+        return apicurioSchemaRegistryClient.getSchemaVersionsBySubject(subjectName);
+    }
+
     public Uni<PostSchemaResponseDto> createSchema(String subjectName, String schema) {
         // Parser: parse schema format.
         return apicurioSchemaRegistryClient.createSchema(subjectName, schema);

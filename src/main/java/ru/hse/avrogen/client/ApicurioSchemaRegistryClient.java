@@ -6,7 +6,6 @@ import javax.ws.rs.core.UriBuilder;
 
 // Mutiny wrappers provided for Vert.X
 import io.smallrye.mutiny.Uni;
-import io.vertx.mutiny.core.MultiMap;
 import io.vertx.mutiny.core.Vertx;
 import io.vertx.mutiny.ext.web.client.HttpResponse;
 import io.vertx.mutiny.ext.web.client.WebClient;
@@ -26,6 +25,7 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
     private final Logger logger;
     private final WebClient client;
     private final UriBuilder getSubjectsUriBuilder;
+    private final UriBuilder getSchemasBySubjectUriBuilder;
     private final UriBuilder postNewSchemaUriBuilder;
 
     @Inject
@@ -35,9 +35,11 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
         this.client = WebClient.create(vertx);
 
         getSubjectsUriBuilder = UriBuilder.fromUri(schemaRegistryUrl + SUBJECTS_URL);
+        getSchemasBySubjectUriBuilder = UriBuilder.fromUri(schemaRegistryUrl + SCHEMA_VERSIONS_URL);
         postNewSchemaUriBuilder = UriBuilder.fromUri(schemaRegistryUrl + SCHEMA_CREATION_URL);
     }
 
+    @Override
     public Uni<List<String>> getSubjects() {
         return client
             .getAbs(getSubjectsUriBuilder.build().toString())
@@ -46,8 +48,11 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
     }
 
     @Override
-    public Uni<List<Integer>> getSchemasBySubject(String subjectName) {
-        throw new NotImplementedYet();
+    public Uni<List<Integer>> getSchemaVersionsBySubject(String subjectName) {
+        return client
+                .getAbs(getSchemasBySubjectUriBuilder.build(subjectName).toString())
+                .send()
+                .flatMap(response -> mapGetSchemaVersionsResult(response, subjectName));
     }
 
     @Override
@@ -55,15 +60,12 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
         throw new NotImplementedYet();
     }
 
+    @Override
     public Uni<PostSchemaResponseDto> createSchema(String subjectName, String newSchema) {
-
-        MultiMap form = MultiMap.caseInsensitiveMultiMap();
-        form.set("schema", newSchema);
-
         return client
             .postAbs(postNewSchemaUriBuilder.build(subjectName).toString())
             .sendJson(newSchema)
-            .flatMap(this::mapPostSchemaResponse);
+            .flatMap(response -> mapPostSchemaResponse(response, subjectName));
     }
 
     @Override
@@ -76,15 +78,18 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
         throw new NotImplementedYet();
     }
 
-    private <T> Uni<PostSchemaResponseDto> mapPostSchemaResponse(HttpResponse<? super T> response) {
+    private <T> Uni<PostSchemaResponseDto> mapPostSchemaResponse(HttpResponse<? super T> response, String subjectName) {
         logger.info(response.bodyAsString());
         if (response.statusCode() == 200) {
-            return Uni.createFrom().item(new PostSchemaResponseDto(response.bodyAsJsonObject().getInteger("id")));
+            final var creationResultDto = new PostSchemaResponseDto(response.bodyAsJsonObject().getInteger("id"));
+            logger.info(String.format("Successfully created schema with id %d under subject %s",
+                    creationResultDto.id(), subjectName));
+            return Uni.createFrom().item(creationResultDto);
         }
 
-        var message = String.format("Error creating schema: %d, cause by: %s",
+        final var errorMessage = String.format("Error creating schema: %d, cause by: %s",
                 response.statusCode(), response.statusMessage());
-        return Uni.createFrom().failure(new ApicurioClientException(message));
+        return Uni.createFrom().failure(new ApicurioClientException(errorMessage));
     }
 
     private <T> Uni<List<String>> mapGetSubjectsResult(HttpResponse<? super T> response) {
@@ -98,6 +103,20 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
         final var errorMessage = String.format("Request to %s returned %d, cause: %s",
                 SUBJECTS_URL, response.statusCode(), response.statusMessage());
 
+        return Uni.createFrom().failure(new ApicurioClientException(errorMessage));
+    }
+
+    private <T> Uni<List<Integer>> mapGetSchemaVersionsResult(HttpResponse<? super T> response, String subjectName) {
+        if (response.statusCode() == 200) {
+            var result = Arrays.asList(response.bodyAsJson(Integer[].class));
+            logger.info(String.format("Successfully received versions for subject %s", subjectName));
+            return Uni.createFrom().item(result);
+        }
+
+        logger.warn("Error: unable to retrieve schema versions from "
+                + getSchemasBySubjectUriBuilder.build(subjectName).toString());
+        final var errorMessage = String.format("Error on retrieving schema versions: %d, cause by: %s",
+                response.statusCode(), response.statusMessage());
         return Uni.createFrom().failure(new ApicurioClientException(errorMessage));
     }
 }
