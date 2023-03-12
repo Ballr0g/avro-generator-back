@@ -10,6 +10,11 @@ GET http://localhost:9091/apis/ccompat/v6/subjects
 GET http://localhost:9091/apis/ccompat/v6/subjects/666/versions
 
 ###
+# Get schema by specific subject and version.
+
+GET http://localhost:9091/apis/ccompat/v6/subjects/666/versions/latest
+
+###
 # Add a new schema under the specified subject.
 
 POST http://localhost:9091/apis/ccompat/v6/subjects/666/versions
@@ -28,6 +33,11 @@ GET http://localhost:8080/avroGenerator/v1/getSubjects
 # List all versions under a specific subject.
 
 GET http://localhost:8080/avroGenerator/v1/getSchemaVersions?subject=666
+
+###
+# Get schema by subject and version.
+
+GET http://localhost:8080/avroGenerator/v1/getSchema/666/latest
 
 ###
 # Add a new schema under the specified subject.
