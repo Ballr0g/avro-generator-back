@@ -30,4 +30,8 @@ public class AvroCRUDService {
         // Parser: parse schema format.
         return apicurioSchemaRegistryClient.createSchema(subjectName, schema);
     }
+
+    public Uni<List<Integer>> deleteSubject(String subjectName) {
+        return apicurioSchemaRegistryClient.deleteSubject(subjectName);
+    }
 }

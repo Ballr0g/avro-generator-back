@@ -27,6 +27,7 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
     private final UriBuilder getSubjectsUriBuilder;
     private final UriBuilder getSchemasBySubjectUriBuilder;
     private final UriBuilder postNewSchemaUriBuilder;
+    private final UriBuilder deleteSubjectUriBuilder;
 
     @Inject
     public ApicurioSchemaRegistryClient(Logger logger, Vertx vertx,
@@ -37,14 +38,15 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
         getSubjectsUriBuilder = UriBuilder.fromUri(schemaRegistryUrl + SUBJECTS_URL);
         getSchemasBySubjectUriBuilder = UriBuilder.fromUri(schemaRegistryUrl + SCHEMA_VERSIONS_URL);
         postNewSchemaUriBuilder = UriBuilder.fromUri(schemaRegistryUrl + SCHEMA_CREATION_URL);
+        deleteSubjectUriBuilder = UriBuilder.fromUri(schemaRegistryUrl + SUBJECTS_DELETION_URL);
     }
 
     @Override
     public Uni<List<String>> getSubjects() {
         return client
-            .getAbs(getSubjectsUriBuilder.build().toString())
-            .send()
-            .flatMap(this::mapGetSubjectsResult);
+                .getAbs(getSubjectsUriBuilder.build().toString())
+                .send()
+                .flatMap(this::mapGetSubjectsResult);
     }
 
     @Override
@@ -63,14 +65,18 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
     @Override
     public Uni<PostSchemaResponseDto> createSchema(String subjectName, String newSchema) {
         return client
-            .postAbs(postNewSchemaUriBuilder.build(subjectName).toString())
-            .sendJson(newSchema)
-            .flatMap(response -> mapPostSchemaResponse(response, subjectName));
+                .postAbs(postNewSchemaUriBuilder.build(subjectName).toString())
+                .sendJson(newSchema)
+                .flatMap(response -> mapPostSchemaResponse(response, subjectName));
     }
 
     @Override
     public Uni<List<Integer>> deleteSubject(String subjectName) {
-        throw new NotImplementedYet();
+        logger.info(deleteSubjectUriBuilder.build(subjectName).toString());
+        return client
+                .deleteAbs(deleteSubjectUriBuilder.build(subjectName).toString())
+                .send()
+                .flatMap(response -> mapDeleteSubjectResult(response, subjectName));
     }
 
     @Override
@@ -87,7 +93,7 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
             return Uni.createFrom().item(creationResultDto);
         }
 
-        final var errorMessage = String.format("Error creating schema: %d, cause by: %s",
+        final var errorMessage = String.format("Error creating schema: %d, caused by: %s",
                 response.statusCode(), response.statusMessage());
         return Uni.createFrom().failure(new ApicurioClientException(errorMessage));
     }
@@ -116,6 +122,20 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
         logger.warn("Error: unable to retrieve schema versions from "
                 + getSchemasBySubjectUriBuilder.build(subjectName).toString());
         final var errorMessage = String.format("Error on retrieving schema versions: %d, cause by: %s",
+                response.statusCode(), response.statusMessage());
+        return Uni.createFrom().failure(new ApicurioClientException(errorMessage));
+    }
+
+    private <T> Uni<List<Integer>> mapDeleteSubjectResult(HttpResponse<? super T> response, String subjectName) {
+        if (response.statusCode() == 200) {
+            var result = Arrays.asList(response.bodyAsJson(Integer[].class));
+            logger.info(String.format("Successfully deleted subject %s", subjectName));
+            return Uni.createFrom().item(result);
+        }
+
+        logger.warn("Error: unable to delete subject by calling "
+                + deleteSubjectUriBuilder.build(subjectName).toString());
+        final var errorMessage = String.format("Error on deleting subject: %d, caused by: %s",
                 response.statusCode(), response.statusMessage());
         return Uni.createFrom().failure(new ApicurioClientException(errorMessage));
     }
