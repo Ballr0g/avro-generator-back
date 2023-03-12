@@ -36,7 +36,7 @@ POST http://localhost:8080/avroGenerator/v1/createSchema
 Content-Type: application/json
 
 {
-  "subjectName": "667",
+  "subjectName": "666",
   "schema": "{ \"type\": \"record\", \"name\": \"test\", \"fields\": [ { \"type\": \"string\", \"name\": \"field2\" }, { \"type\": \"int\", \"name\": \"field3\" } ] }"
 }
 
