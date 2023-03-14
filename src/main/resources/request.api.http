@@ -27,11 +27,11 @@ Content-Type: application/json
 ###
 # Delete all schemas under the specified subject.
 
-DELETE http://localhost:9091/subjects/666
+DELETE http://localhost:9091/apis/ccompat/v6/subjects/666
 
 ###
 
-DELETE http://localhost:9091/subjects/666/versions/latest
+DELETE http://localhost:9091/apis/ccompat/v6/subjects/666/versions/latest
 
 ### ------------------------------------------------------------------
 # List all available subjects.
