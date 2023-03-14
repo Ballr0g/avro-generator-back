@@ -10,6 +10,11 @@ GET http://localhost:9091/apis/ccompat/v6/subjects
 GET http://localhost:9091/apis/ccompat/v6/subjects/666/versions
 
 ###
+# Get schema by specific subject and version.
+
+GET http://localhost:9091/apis/ccompat/v6/subjects/666/versions/latest
+
+###
 # Add a new schema under the specified subject.
 
 POST http://localhost:9091/apis/ccompat/v6/subjects/666/versions
@@ -20,6 +25,15 @@ Content-Type: application/json
 }
 
 ###
+# Delete all schemas under the specified subject.
+
+DELETE http://localhost:9091/apis/ccompat/v6/subjects/666
+
+###
+
+DELETE http://localhost:9091/apis/ccompat/v6/subjects/666/versions/latest
+
+### ------------------------------------------------------------------
 # List all available subjects.
 
 GET http://localhost:8080/avroGenerator/v1/getSubjects
@@ -27,7 +41,12 @@ GET http://localhost:8080/avroGenerator/v1/getSubjects
 ###
 # List all versions under a specific subject.
 
-GET http://localhost:8080/avroGenerator/v1/getSchemaVersions?subject=666
+GET http://localhost:8080/avroGenerator/v1/getSchemaVersions/666
+
+###
+# Get schema by subject and version.
+
+GET http://localhost:8080/avroGenerator/v1/getSchema/666/latest
 
 ###
 # Add a new schema under the specified subject.
@@ -37,7 +56,7 @@ Content-Type: application/json
 
 {
   "subjectName": "666",
-  "schema": "{ \"type\": \"record\", \"name\": \"test\", \"fields\": [ { \"type\": \"string\", \"name\": \"field2\" }, { \"type\": \"int\", \"name\": \"field3\" } ] }"
+  "schema": "{ \"type\": \"record\", \"name\": \"test\", \"fields\": [ { \"type\": \"string\", \"name\": \"field1\" }, { \"type\": \"int\", \"name\": \"field2\" } ] }"
 }
 
 ###

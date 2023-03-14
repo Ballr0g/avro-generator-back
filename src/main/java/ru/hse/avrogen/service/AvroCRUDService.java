@@ -2,6 +2,7 @@ package ru.hse.avrogen.service;
 
 import io.smallrye.mutiny.Uni;
 import ru.hse.avrogen.client.SchemaRegistryClient;
+import ru.hse.avrogen.dto.GetSchemaInfoDto;
 import ru.hse.avrogen.dto.PostSchemaResponseDto;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -14,8 +15,8 @@ public class AvroCRUDService {
     @Inject
     SchemaRegistryClient apicurioSchemaRegistryClient;
 
-    public Uni<List<String>> getAvroSchemas() {
-        return Uni.createFrom().item(List.of("Dummy string result"));
+    public Uni<GetSchemaInfoDto> getAvroSchemas(String subjectName, String schemaVersion) {
+        return apicurioSchemaRegistryClient.getSchemaByVersion(subjectName, schemaVersion);
     }
 
     public Uni<List<String>> getSubjects() {
