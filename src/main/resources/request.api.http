@@ -7,17 +7,17 @@ GET http://{{docker_host}}/subjects
 ###
 # List all versions under a specific subject.
 
-GET http://{{docker_host}}/subjects/666/versions
+GET http://{{docker_host}}/subjects/{{test_subject}}/versions
 
 ###
 # Get schema by specific subject and version.
 
-GET http://{{docker_host}}/subjects/666/versions/latest
+GET http://{{docker_host}}/subjects/{{test_subject}}/versions/{{test_version}}
 
 ###
 # Add a new schema under the specified subject - invalid schema.
 
-POST http://{{docker_host}}/subjects/666/versions
+POST http://{{docker_host}}/subjects/{{test_subject}}/versions
 Content-Type: application/json
 
 {
@@ -27,11 +27,11 @@ Content-Type: application/json
 ###
 # Delete all schemas under the specified subject.
 
-DELETE http://{{docker_host}}/subjects/666
+DELETE http://{{docker_host}}/subjects/{{test_subject}}
 
 ###
 
-DELETE http://{{docker_host}}/subjects/666/versions/latest
+DELETE http://{{docker_host}}/subjects/{{test_subject}}/versions/{{test_version}}
 
 ### ------------------------------------------------------------------
 # List all available subjects.
@@ -41,12 +41,12 @@ GET http://{{host}}}/avroGenerator/v1/getSubjects
 ###
 # List all versions under a specific subject.
 
-GET http://{{host}}/avroGenerator/v1/getSchemaVersions/666
+GET http://{{host}}/avroGenerator/v1/getSchemaVersions/{{test_subject}}
 
 ###
 # Get schema by subject and version.
 
-GET http://{{host}}/avroGenerator/v1/getSchema/666/latest
+GET http://{{host}}/avroGenerator/v1/getSchema/{{test_subject}}/{{test_version}}
 
 ###
 # Add a new schema under the specified subject.
