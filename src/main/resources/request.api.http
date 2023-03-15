@@ -56,7 +56,7 @@ POST http://{{host}}/avroGenerator/v1/createSchema
 Content-Type: application/json
 
 {
-  "subjectName": "666",
+  "subjectName": "{{test_subject}}",
   "schema": "{ \"type\": \"record\", \"name\": \"test\", \"fields\": [ { \"type\": \"string\", \"name\": \"field1\" }, { \"type\": \"int\", \"name\": \"field2\" } ] }"
 }
 
@@ -67,7 +67,7 @@ DELETE http://{{host}}/avroGenerator/v1/deleteSubject
 Content-Type: application/json
 
 {
-  "subjectName": "666"
+  "subjectName": "{{test_subject}}"
 }
 
 ###
@@ -77,6 +77,6 @@ DELETE http://{{host}}/avroGenerator/v1/deleteSchema
 Content-Type: application/json
 
 {
-  "subjectName": "666",
-  "schemaVersion": "1"
+  "subjectName": "{{test_subject}}",
+  "schemaVersion": "{{test_version}}"
 }
