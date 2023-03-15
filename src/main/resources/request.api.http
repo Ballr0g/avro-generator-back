@@ -30,6 +30,7 @@ Content-Type: application/json
 DELETE http://{{docker_host}}/subjects/{{test_subject}}
 
 ###
+# Delete the version selected for given subject.
 
 DELETE http://{{docker_host}}/subjects/{{test_subject}}/versions/{{test_version}}
 
