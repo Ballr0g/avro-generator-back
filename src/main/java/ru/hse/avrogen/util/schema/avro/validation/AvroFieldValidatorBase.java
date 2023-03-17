@@ -20,7 +20,11 @@ public abstract class AvroFieldValidatorBase {
     // Idea: all schemas require type and name + have required fields.
     // Todo: meaningful FieldRequirementsDto returns for each case.
     public List<FieldRequirementsDto> validateSchema(Schema schema) {
-        if (getRequiredSchemaType().isPresent() && schema.getType() != getRequiredSchemaType().get()) {
+        if (Objects.isNull(schema)) {
+            throw new IllegalArgumentException("The schema provided for parsing was null");
+        }
+
+        if (requiredTypeMatches(schema.getType())) {
             throw new IllegalStateException("Schema type mismatch.");
         }
 
@@ -77,7 +81,7 @@ public abstract class AvroFieldValidatorBase {
      *
      * @return An optional with required Avro type of the schema or empty if there are no constraints set for it.
      */
-    protected abstract Optional<Schema.Type> getRequiredSchemaType();
+    protected abstract List<Schema.Type> getAllowedSchemaTypes();
 
     /**
      * <p>
@@ -121,5 +125,12 @@ public abstract class AvroFieldValidatorBase {
      */
     protected List<FieldRequirementsDto> getSchemaSpecificConstraintViolations(Schema schema) {
         return Collections.emptyList();
+    }
+
+    protected boolean requiredTypeMatches(Schema.Type schemaType) {
+        final var allowedSchemaTypes = getAllowedSchemaTypes();
+        return Objects.isNull(allowedSchemaTypes)
+                || allowedSchemaTypes.isEmpty()
+                || allowedSchemaTypes.contains(schemaType);
     }
 }

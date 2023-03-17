@@ -13,6 +13,10 @@ public class PayloadAvroFieldValidator extends AvroFieldValidatorBase {
     private static final List<String> NESTED_STRUCTURE_REQUIRED_FIELDS = List.of(
             NESTED_STRUCTURE_IS_KEY_FIELDS
     );
+    private static final List<Schema.Type> ALLOWED_PAYLOAD_SCHEMA_TYPES = List.of(
+            Schema.Type.UNION,
+            Schema.Type.RECORD
+    );
 
     public PayloadAvroFieldValidator() {
         super(Collections.emptyList());
@@ -24,8 +28,8 @@ public class PayloadAvroFieldValidator extends AvroFieldValidatorBase {
     }
 
     @Override
-    protected Optional<Schema.Type> getRequiredSchemaType() {
-        return Optional.of(Schema.Type.UNION);
+    protected List<Schema.Type> getAllowedSchemaTypes() {
+        return ALLOWED_PAYLOAD_SCHEMA_TYPES;
     }
 
     @Override
@@ -41,6 +45,7 @@ public class PayloadAvroFieldValidator extends AvroFieldValidatorBase {
         return null;
     }
 
+    // Todo: update validation to support both unions and records.
     private boolean schemaIsOptionalRecord(List<Schema> unionSchemas) {
         return unionSchemas.size() == OPTIONAL_RECORD_FIELDS_COUNT
                 && unionSchemas.get(0).getType() == Schema.Type.NULL

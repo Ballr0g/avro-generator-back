@@ -15,6 +15,9 @@ public class SystemInfoAvroFieldValidator extends AvroFieldValidatorBase {
             TIMESTAMP_FIELD_NAME,
             OPERATION_FIELD_NAME
     );
+    private static final List<Schema.Type> ALLOWED_SYSTEM_INFO_SCHEMA_TYPES = List.of(
+            Schema.Type.RECORD
+    );
 
     public SystemInfoAvroFieldValidator() {
         super(SYSTEM_INFO_SCHEMA_REQUIRED_FIELDS);
@@ -26,7 +29,7 @@ public class SystemInfoAvroFieldValidator extends AvroFieldValidatorBase {
     }
 
     @Override
-    protected Optional<Schema.Type> getRequiredSchemaType() {
-        return Optional.of(Schema.Type.RECORD);
+    protected List<Schema.Type> getAllowedSchemaTypes() {
+        return ALLOWED_SYSTEM_INFO_SCHEMA_TYPES;
     }
 }

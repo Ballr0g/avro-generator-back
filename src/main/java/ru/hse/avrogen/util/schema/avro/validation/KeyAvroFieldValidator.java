@@ -14,6 +14,9 @@ public class KeyAvroFieldValidator extends AvroFieldValidatorBase {
             Schema.Type.INT, Schema.Type.LONG, Schema.Type.FLOAT,
             Schema.Type.DOUBLE, Schema.Type.BYTES, Schema.Type.STRING
     );
+    private static final List<Schema.Type> ALLOWED_KEY_SCHEMA_TYPES = List.of(
+            Schema.Type.RECORD
+    );
 
     public KeyAvroFieldValidator() {
         super(Collections.emptyList());
@@ -25,8 +28,8 @@ public class KeyAvroFieldValidator extends AvroFieldValidatorBase {
     }
 
     @Override
-    protected Optional<Schema.Type> getRequiredSchemaType() {
-        return Optional.of(Schema.Type.RECORD);
+    protected List<Schema.Type> getAllowedSchemaTypes() {
+        return ALLOWED_KEY_SCHEMA_TYPES;
     }
 
     @Override

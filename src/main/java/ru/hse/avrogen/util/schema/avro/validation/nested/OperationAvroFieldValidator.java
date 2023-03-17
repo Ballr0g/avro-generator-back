@@ -11,14 +11,17 @@ import java.util.Set;
 
 public class OperationAvroFieldValidator extends AvroFieldValidatorBase {
     private static final Set<String> SUPPORTED_OPERATION_ENUM_VALUES = Set.of("I", "U", "D");
+    private static final List<Schema.Type> ALLOWED_OPERATION_SCHEMA_TYPES = List.of(
+            Schema.Type.ENUM
+    );
 
     public OperationAvroFieldValidator(List<String> requiredFields) {
         super(requiredFields);
     }
 
     @Override
-    protected Optional<Schema.Type> getRequiredSchemaType() {
-        return Optional.of(Schema.Type.ENUM);
+    protected List<Schema.Type> getAllowedSchemaTypes() {
+        return ALLOWED_OPERATION_SCHEMA_TYPES;
     }
 
     @Override

@@ -20,6 +20,9 @@ public class SdpSchemaAvroFieldValidator extends AvroFieldValidatorBase {
             KEY_REQUIRED_FIELD_NAME,
             PAYLOAD_REQUIRED_FIELD_NAME
     );
+    private static final List<Schema.Type> ALLOWED_SDP_SCHEMA_TYPES = List.of(
+            Schema.Type.RECORD
+    );
 
     // Todo: more meaningful pattern
     private static final Pattern SCHEMA_NAMESPACE_FORMAT = Pattern.compile("^\\d+(\\.\\d+)*$");
@@ -34,8 +37,8 @@ public class SdpSchemaAvroFieldValidator extends AvroFieldValidatorBase {
     }
 
     @Override
-    protected Optional<Schema.Type> getRequiredSchemaType() {
-        return Optional.of(Schema.Type.RECORD);
+    protected List<Schema.Type> getAllowedSchemaTypes() {
+        return ALLOWED_SDP_SCHEMA_TYPES;
     }
 
     @Override

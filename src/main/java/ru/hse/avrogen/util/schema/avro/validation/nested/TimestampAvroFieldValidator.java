@@ -16,13 +16,14 @@ public class TimestampAvroFieldValidator extends AvroFieldValidatorBase {
     private static final List<String> TIMESTAMP_SCHEMA_REQUIRED_FIELDS = List.of(
             LOGICAL_TYPE_FIELD_NAME
     );
+
     public TimestampAvroFieldValidator() {
         super(TIMESTAMP_SCHEMA_REQUIRED_FIELDS);
     }
 
     @Override
-    protected Optional<Schema.Type> getRequiredSchemaType() {
-        return Optional.empty();
+    protected List<Schema.Type> getAllowedSchemaTypes() {
+        return Collections.emptyList();
     }
 
     @Override
