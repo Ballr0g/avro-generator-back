@@ -1,0 +1,24 @@
+{
+    "type": "record",
+    "name": "system_record",
+    "fields":
+    [
+        {
+            "name": "key",
+            "type":
+            {
+                "type": "record",
+                "name": "key_record",
+                "fields":
+                [
+                    {
+                        "name": "id",
+                        "type": "int",
+                        "doc": "unique id",
+                        "comment": "unique id"
+                    }
+                ]
+            }
+        }
+    ]
+}

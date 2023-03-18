@@ -1,0 +1,63 @@
+{
+    "type": "record",
+    "name": "system_record",
+    "fields":
+    [
+        {
+            "name": "version",
+            "type":
+            {
+                "type": "long"
+            }
+        },
+        {
+            "name": "user_info",
+            "type":
+            {
+                "type": "record",
+                "name": "user_record",
+                "fields":
+                [
+                    {
+                        "name": "first_name",
+                        "type":
+                        {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "middle_name",
+                        "type":
+                        {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "last_name",
+                        "type":
+                        {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+            {
+                "name": "timestamp",
+                "type":
+                {
+                    "type": "long",
+                    "logicalType": "timestamp-millis"
+                }
+            },
+        {
+            "name": "operation",
+            "type":
+            {
+                "type": "enum",
+                "name" : "operations",
+                "symbols" : [ "I", "U", "D" ]
+            }
+        }
+    ]
+}

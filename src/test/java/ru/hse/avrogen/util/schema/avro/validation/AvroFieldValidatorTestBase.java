@@ -4,11 +4,16 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.apache.avro.Schema;
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.BeforeEach;
+import ru.hse.avrogen.util.errors.AvroSdpViolationType;
+import ru.hse.avrogen.util.errors.AvroValidatorViolation;
 
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @QuarkusTest
 public class AvroFieldValidatorTestBase {
@@ -37,5 +42,20 @@ public class AvroFieldValidatorTestBase {
         } catch (IOException e) {
             throw new IllegalStateException("An error occurred on parsing Avro schema from file", e);
         }
+    }
+
+    protected void assertSingleSdpFormatViolation(AvroFieldValidatorBase avroFieldValidator,
+                                                  String resourceFilePath,
+                                                  AvroSdpViolationType violationType) {
+        var operationsSchema = getSchemaForResourceFile(resourceFilePath);
+        var validationErrors = avroFieldValidator.validateSchema(operationsSchema);
+
+        assertFalse(validationErrors.isEmpty());
+        assertEquals(1, validationErrors.size());
+
+        var error = validationErrors.get(0);
+        logger.info(error.description());
+        assertEquals(AvroValidatorViolation.SDP_FORMAT_VIOLATION, error.violationType());
+        assertEquals(violationType, error.sdpCause());
     }
 }
