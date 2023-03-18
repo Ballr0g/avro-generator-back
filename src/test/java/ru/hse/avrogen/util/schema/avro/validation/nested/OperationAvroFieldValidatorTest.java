@@ -25,7 +25,6 @@ class OperationAvroFieldValidatorTest extends AvroFieldValidatorTestBase {
             TEST_OPERATIONS_SCHEMAS_SUBFOLDER + "invalidOperationMissingSymbols.avro";
     private static final String TEST_INVALID_SCHEMA_TYPE_MISMATCH =
             TEST_OPERATIONS_SCHEMAS_SUBFOLDER + "invalidOperationTypeMismatch.avro";
-
     @Inject
     OperationAvroFieldValidator operationAvroFieldValidator;
 
@@ -50,7 +49,7 @@ class OperationAvroFieldValidatorTest extends AvroFieldValidatorTestBase {
         assertEquals(1, validationErrors.size());
 
         var error = validationErrors.get(0);
-        System.out.println(error.description());
+        logger.info(error.description());
         assertEquals(AvroSdpViolationType.ILLEGAL_STRUCTURE, error.sdpCause());
     }
 
@@ -65,7 +64,7 @@ class OperationAvroFieldValidatorTest extends AvroFieldValidatorTestBase {
         assertEquals(1, validationErrors.size());
 
         var error = validationErrors.get(0);
-        System.out.println(error.description());
+        logger.info(error.description());
         assertEquals(AvroSdpViolationType.SCHEMA_TYPE_MISMATCH, error.sdpCause());
     }
 }

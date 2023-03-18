@@ -2,8 +2,10 @@ package ru.hse.avrogen.util.schema.avro.validation;
 
 import io.quarkus.test.junit.QuarkusTest;
 import org.apache.avro.Schema;
+import org.jboss.logging.Logger;
 import org.junit.jupiter.api.BeforeEach;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
@@ -13,6 +15,9 @@ public class AvroFieldValidatorTestBase {
     public static final String TEST_SCHEMAS_ROOT_RESOURCE_FOLDER = "testSchemas/";
 
     protected Schema.Parser schemaParser;
+
+    @Inject
+    protected Logger logger;
 
     @BeforeEach
     void initSchemaParser() {
