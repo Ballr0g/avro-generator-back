@@ -44,7 +44,7 @@ class KeyAvroFieldValidatorTest extends AvroFieldValidatorTestBase {
     @ValueSource(strings = TEST_INVALID_SCHEMA_TYPE_MISMATCH)
     @DisplayName("Test invalid key schema type")
     void invalidKeySchemaTypeMismatchFailureTest(String resourceFilePath) {
-        assertSingleSystemInfoFormatViolation(resourceFilePath, AvroSdpViolationType.SCHEMA_TYPE_MISMATCH);
+        assertSingleKeyFormatViolation(resourceFilePath, AvroSdpViolationType.SCHEMA_TYPE_MISMATCH);
     }
 
     @ParameterizedTest
@@ -55,10 +55,10 @@ class KeyAvroFieldValidatorTest extends AvroFieldValidatorTestBase {
     })
     @DisplayName("Test invalid key schema fields")
     void invalidKeySchemaNoFieldsFailureTest(String resourceFilePath) {
-        assertSingleSystemInfoFormatViolation(resourceFilePath, AvroSdpViolationType.ILLEGAL_STRUCTURE);
+        assertSingleKeyFormatViolation(resourceFilePath, AvroSdpViolationType.ILLEGAL_STRUCTURE);
     }
 
-    private void assertSingleSystemInfoFormatViolation(String resourceFilePath, AvroSdpViolationType violationType) {
+    private void assertSingleKeyFormatViolation(String resourceFilePath, AvroSdpViolationType violationType) {
         assertSingleSdpFormatViolation(keyAvroFieldValidator, resourceFilePath, violationType);
     }
 }
