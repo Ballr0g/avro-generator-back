@@ -24,7 +24,7 @@ public abstract class AvroFieldValidatorBase {
         }
 
         final var schemaType = schema.getType();
-        if (requiredTypeMatches(schemaType)) {
+        if (!requiredTypeMatches(schemaType)) {
             return List.of(new SchemaRequirementViolationDto(
                     schema,
                     AvroValidatorViolation.SDP_FORMAT_VIOLATION,
