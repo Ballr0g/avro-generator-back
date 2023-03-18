@@ -1,0 +1,14 @@
+[
+    "null",
+    {
+        "type": "record",
+        "name": "payload_record",
+        "fields":
+        [
+            {
+                "name": "val",
+                "type": "string"
+            }
+        ]
+    }
+]
