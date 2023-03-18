@@ -14,18 +14,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
 class TimestampAvroFieldValidatorTest extends AvroFieldValidatorTestBase {
-    private static final String TEST_OPERATIONS_SCHEMAS_SUBFOLDER =
+    private static final String TEST_TIMESTAMPS_SCHEMAS_SUBFOLDER =
             TEST_SCHEMAS_ROOT_RESOURCE_FOLDER + "timestamps/";
     private static final String TEST_VALID_SCHEMA =
-            TEST_OPERATIONS_SCHEMAS_SUBFOLDER + "validTimestamp.avro";
+            TEST_TIMESTAMPS_SCHEMAS_SUBFOLDER + "validTimestamp.avro";
     private static final String TEST_INVALID_SCHEMA_PRIMITIVE =
-            TEST_OPERATIONS_SCHEMAS_SUBFOLDER + "invalidTimestampPrimitive.avro";
+            TEST_TIMESTAMPS_SCHEMAS_SUBFOLDER + "invalidTimestampPrimitive.avro";
     private static final String TEST_INVALID_SCHEMA_RECORD =
-            TEST_OPERATIONS_SCHEMAS_SUBFOLDER + "invalidTimestampRecord.avro";
+            TEST_TIMESTAMPS_SCHEMAS_SUBFOLDER + "invalidTimestampRecord.avro";
     private static final String TEST_INVALID_SCHEMA_LOGICAL_MICROS =
-            TEST_OPERATIONS_SCHEMAS_SUBFOLDER + "invalidTimestampMicros.avro";
+            TEST_TIMESTAMPS_SCHEMAS_SUBFOLDER + "invalidTimestampMicros.avro";
     private static final String TEST_INVALID_SCHEMA_LOGICAL_DECIMAL =
-            TEST_OPERATIONS_SCHEMAS_SUBFOLDER + "invalidTimestampDecimal.avro";
+            TEST_TIMESTAMPS_SCHEMAS_SUBFOLDER + "invalidTimestampDecimal.avro";
 
     @Inject
     TimestampAvroFieldValidator timestampAvroFieldValidator;
