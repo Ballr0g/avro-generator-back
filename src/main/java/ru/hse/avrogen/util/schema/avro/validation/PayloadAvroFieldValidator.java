@@ -5,11 +5,13 @@ import ru.hse.avrogen.dto.SchemaRequirementViolationDto;
 import ru.hse.avrogen.util.errors.AvroSdpViolationType;
 import ru.hse.avrogen.util.errors.AvroValidatorViolation;
 
+import javax.enterprise.context.ApplicationScoped;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@ApplicationScoped
 public class PayloadAvroFieldValidator extends AvroFieldValidatorBase {
     private static final int RECORD_TYPES_COUNT = 1;
     private static final int OPTIONAL_RECORD_TYPES_COUNT = 2;
@@ -18,8 +20,8 @@ public class PayloadAvroFieldValidator extends AvroFieldValidatorBase {
             NESTED_STRUCTURE_IS_KEY_FIELDS
     );
     private static final Map<Schema.Type, String> ALLOWED_PAYLOAD_SCHEMA_TYPES_TO_NAMES = Map.of(
-            Schema.Type.UNION, "Null or Record",
-            Schema.Type.RECORD, "Record"
+            Schema.Type.UNION, "null or record",
+            Schema.Type.RECORD, "record"
     );
 
     public PayloadAvroFieldValidator() {
@@ -39,7 +41,8 @@ public class PayloadAvroFieldValidator extends AvroFieldValidatorBase {
     @Override
     protected List<SchemaRequirementViolationDto> getSchemaSpecificConstraintViolations(Schema schema) {
         // Requirement #1: the schema is an optional record (either null or record) or record.
-        final var payloadUnionTypes = schema.getTypes();
+        // Todo: better way to differentiate record and union?
+        final var payloadUnionTypes = schema.isUnion() ? schema.getTypes() : List.of(schema);
         var schemaIsOptionalRecord = isSchemaOptionalRecord(payloadUnionTypes);
         if (!(schemaIsOptionalRecord || isSchemaRecord(payloadUnionTypes))) {
             return List.of(new SchemaRequirementViolationDto(
@@ -50,14 +53,14 @@ public class PayloadAvroFieldValidator extends AvroFieldValidatorBase {
                             "Expected %s type: %s, got: %s",
                             schema.getName(),
                             String.join(" | ", ALLOWED_PAYLOAD_SCHEMA_TYPES_TO_NAMES.values()),
-                            String.join(" | ", mapSchemaTypesToNames(payloadUnionTypes))
+                            String.join(" or ", mapSchemaTypesToNames(payloadUnionTypes))
                     )
             ));
         }
 
         final var nestedSchema = schemaIsOptionalRecord ? payloadUnionTypes.get(1) : payloadUnionTypes.get(0);
         // Todo: Requirement #2: nested fields are either primitives or structures with is_key: true.
-        return null;
+        return Collections.emptyList();
     }
 
     private Optional<SchemaRequirementViolationDto> getNestedPayloadIsKeyViolations(Schema nestedPayloadSchema) {
