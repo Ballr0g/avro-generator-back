@@ -1,3 +1,5 @@
 {
-    "type" : "enum", "name" : "operations", "symbols" : []
+    "type" : "enum",
+    "name" : "operations",
+    "symbols" : []
 }

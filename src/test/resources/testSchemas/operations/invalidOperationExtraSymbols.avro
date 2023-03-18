@@ -1,3 +1,5 @@
 {
-    "type" : "enum", "name" : "operations", "symbols" : [ "I", "U", "D", "C" ]
+    "type" : "enum",
+    "name" : "operations",
+    "symbols" : [ "I", "U", "D", "C" ]
 }

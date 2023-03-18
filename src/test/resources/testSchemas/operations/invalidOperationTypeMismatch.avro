@@ -1,3 +1,6 @@
 {
-    "type" : "record", "name" : "operations", "symbols" : [ "I", "U", "D" ], "fields" : [ ]
+    "type" : "record",
+    "name" : "operations",
+    "symbols" : [ "I", "U", "D" ],
+    "fields" : [ ]
 }
