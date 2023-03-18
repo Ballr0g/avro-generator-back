@@ -56,7 +56,7 @@ class OperationAvroFieldValidatorTest extends AvroFieldValidatorTestBase {
 
     @ParameterizedTest
     @ValueSource(strings = TEST_INVALID_SCHEMA_TYPE_MISMATCH)
-    @DisplayName("Test invalid operations schema with incorrect enum values")
+    @DisplayName("Test invalid operations schema with type mismatch")
     void invalidOperationSchemaIncorrectTypeRecordTest(String resourceFilePath) {
         var operationsSchema = getSchemaForResourceFile(resourceFilePath);
         var validationErrors = operationAvroFieldValidator.validateSchema(operationsSchema);
