@@ -1,0 +1,12 @@
+{
+    "type": "enum",
+    "name": "key_record",
+    "symbols" : [ "I", "U", "D" ],
+    "fields":
+    [
+        {
+            "name": "id",
+            "type": "int"
+        }
+    ]
+}

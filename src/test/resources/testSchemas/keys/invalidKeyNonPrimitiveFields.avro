@@ -1,0 +1,35 @@
+{
+    "type": "record",
+    "name": "key_record",
+    "fields":
+    [
+        {
+            "name": "id",
+            "type": "int"
+        },
+        {
+            "name": "operation",
+            "type":
+            {
+                "type" : "enum",
+                "name" : "operations",
+                "symbols" : [ "I", "U", "D" ]
+            }
+        },
+        {
+            "name": "payload",
+            "type":
+            {
+                "type": "record",
+                "name": "payload_record",
+                "fields":
+                [
+                    {
+                        "name": "val",
+                        "type": "string"
+                    }
+                ]
+            }
+        }
+    ]
+}

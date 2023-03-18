@@ -5,11 +5,13 @@ import ru.hse.avrogen.dto.SchemaRequirementViolationDto;
 import ru.hse.avrogen.util.errors.AvroSdpViolationType;
 import ru.hse.avrogen.util.errors.AvroValidatorViolation;
 
+import javax.enterprise.context.ApplicationScoped;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+@ApplicationScoped
 public class KeyAvroFieldValidator extends AvroFieldValidatorBase {
     private static final Set<Schema.Type> PRIMITIVE_AVRO_TYPES = Set.of(
             Schema.Type.NULL, Schema.Type.BOOLEAN,
@@ -58,7 +60,7 @@ public class KeyAvroFieldValidator extends AvroFieldValidatorBase {
                     AvroValidatorViolation.SDP_FORMAT_VIOLATION,
                     AvroSdpViolationType.ILLEGAL_STRUCTURE,
                     String.format(
-                            "%s key field must be primitive types, found non primitives: %s",
+                            "%s key fields must be primitive types, found non primitives: %s",
                             schema.getName(),
                             String.join(", ", mapFieldsToNames(nonPrimitiveKeyFields))
                     )
