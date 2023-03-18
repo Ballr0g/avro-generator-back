@@ -7,6 +7,7 @@ import ru.hse.avrogen.dto.PostSchemaResponseDto;
 import java.util.List;
 
 public interface SchemaRegistryClient {
+    // Todo: pack to DTOs.
     // Lists all subject names as strings.
     Uni<List<String>> getSubjects();
     Uni<List<Integer>> getSchemaVersionsBySubject(String subjectName);
