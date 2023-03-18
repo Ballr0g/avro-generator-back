@@ -84,13 +84,17 @@ public abstract class AvroFieldValidatorBase {
      * <p>
      * Is overridable for a reason: some validators require checks on nested schema values.
      * </p>y
-     * @param requiredFields List of required fields for the schema.
+     * @param requiredFieldNames List of required field names for the schema. No checks made if null of empty.
      * @param schema The schema checked for required field presence.
      * @return The list containing names of missing required fields. Empty if the check is successful.
      */
-    protected List<String> getMissingRequiredFields(List<String> requiredFields, Schema schema) {
+    protected List<String> getMissingRequiredFields(List<String> requiredFieldNames, Schema schema) {
+        if (Objects.isNull(requiredFieldNames) || requiredFieldNames.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         var schemaFields = schema.getFields();
-        return requiredFields
+        return requiredFieldNames
                 .stream()
                 .filter(
                         field -> !schemaFields
