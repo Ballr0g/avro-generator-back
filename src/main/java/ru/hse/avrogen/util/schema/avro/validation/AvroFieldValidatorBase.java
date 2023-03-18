@@ -1,15 +1,15 @@
 package ru.hse.avrogen.util.schema.avro.validation;
 
 import org.apache.avro.Schema;
-import ru.hse.avrogen.dto.FieldRequirementsDto;
+import ru.hse.avrogen.dto.SchemaRequirementViolationDto;
+import ru.hse.avrogen.util.errors.AvroSdpViolationType;
+import ru.hse.avrogen.util.errors.AvroValidatorViolation;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class AvroFieldValidatorBase {
+    // Todo: SchemaRequirementViolationDto builder.
     protected final List<String> requiredFields;
 
     public AvroFieldValidatorBase(List<String> requiredFields) {
@@ -18,32 +18,64 @@ public abstract class AvroFieldValidatorBase {
 
     // Template method: validates against schema type, required fields and other constraints.
     // Idea: all schemas require type and name + have required fields.
-    // Todo: meaningful FieldRequirementsDto returns for each case.
-    public List<FieldRequirementsDto> validateSchema(Schema schema) {
+    public List<SchemaRequirementViolationDto> validateSchema(Schema schema) throws IllegalArgumentException {
         if (Objects.isNull(schema)) {
             throw new IllegalArgumentException("The schema provided for parsing was null");
         }
 
-        if (requiredTypeMatches(schema.getType())) {
-            throw new IllegalStateException("Schema type mismatch.");
+        final var schemaType = schema.getType();
+        if (requiredTypeMatches(schemaType)) {
+            return List.of(new SchemaRequirementViolationDto(
+                    schema,
+                    AvroValidatorViolation.SDP_FORMAT_VIOLATION,
+                    AvroSdpViolationType.SCHEMA_TYPE_MISMATCH,
+                    String.format(
+                            "Expected %s type: %s, got: %s",
+                            schema.getName(),
+                            String.join(" | ", getAllowedTypeNames()),
+                            schemaType
+                    )
+            ));
         }
 
-        if (getRequiredName().isPresent() && !Objects.equals(schema.getName(), getRequiredName().get())) {
-            throw new IllegalStateException("Schema name mismatch.");
+        var violationsList = new ArrayList<SchemaRequirementViolationDto>();
+        final var schemaName = schema.getName();
+        if (getRequiredName().isPresent() && !Objects.equals(schemaName, getRequiredName().get())) {
+            violationsList.add(new SchemaRequirementViolationDto(
+                    schema,
+                    AvroValidatorViolation.SDP_FORMAT_VIOLATION,
+                    AvroSdpViolationType.ILLEGAL_NAMING,
+                    String.format(
+                            "Expected %s name: %s, got %s",
+                            schema.getName(),
+                            getRequiredName().get(),
+                            schemaName)
+                    )
+            );
         }
 
         final var missingRequiredFields = getMissingRequiredFields(schema);
         if (!missingRequiredFields.isEmpty()) {
-            throw new IllegalStateException("Missing required fields: "
-                    + String.join(", ", missingRequiredFields));
+            violationsList.add(new SchemaRequirementViolationDto(
+                            schema,
+                            AvroValidatorViolation.SDP_FORMAT_VIOLATION,
+                            AvroSdpViolationType.MISSING_REQUIRED_FIELD,
+                            String.format(
+                                    "Missing %s required fields: %s",
+                                    schema.getName(),
+                                    String.join(", ", missingRequiredFields)
+                            )
+                    )
+            );
+            return violationsList;
         }
 
         final var nestedFieldConstraintRequirements = getSchemaSpecificConstraintViolations(schema);
         if (!nestedFieldConstraintRequirements.isEmpty()) {
-            throw new IllegalStateException("Nested constraint violations.");
+            violationsList.addAll(nestedFieldConstraintRequirements);
         }
 
-        return Collections.emptyList();
+        return violationsList;
     }
 
     /**
@@ -123,7 +155,7 @@ public abstract class AvroFieldValidatorBase {
      * @param schema The schema checked for extra constraints.
      * @return A list containing objects describing every error occurred during validation.
      */
-    protected List<FieldRequirementsDto> getSchemaSpecificConstraintViolations(Schema schema) {
+    protected List<SchemaRequirementViolationDto> getSchemaSpecificConstraintViolations(Schema schema) {
         return Collections.emptyList();
     }
 
@@ -132,5 +164,13 @@ public abstract class AvroFieldValidatorBase {
         return Objects.isNull(allowedSchemaTypes)
                 || allowedSchemaTypes.isEmpty()
                 || allowedSchemaTypes.contains(schemaType);
+    }
+
+    // Todo: move to SchemaUtils.
+    private List<String> getAllowedTypeNames() {
+        return getAllowedSchemaTypes()
+                .stream()
+                .map(Schema.Type::getName)
+                .toList();
     }
 }

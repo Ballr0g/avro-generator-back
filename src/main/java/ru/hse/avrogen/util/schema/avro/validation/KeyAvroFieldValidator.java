@@ -1,7 +1,9 @@
 package ru.hse.avrogen.util.schema.avro.validation;
 
 import org.apache.avro.Schema;
-import ru.hse.avrogen.dto.FieldRequirementsDto;
+import ru.hse.avrogen.dto.SchemaRequirementViolationDto;
+import ru.hse.avrogen.util.errors.AvroSdpViolationType;
+import ru.hse.avrogen.util.errors.AvroValidatorViolation;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,26 +35,50 @@ public class KeyAvroFieldValidator extends AvroFieldValidatorBase {
     }
 
     @Override
-    protected List<FieldRequirementsDto> getSchemaSpecificConstraintViolations(Schema schema) {
+    protected List<SchemaRequirementViolationDto> getSchemaSpecificConstraintViolations(Schema schema) {
         // Requirement #1: the schema has at least 1 field.
         final var keyFields = schema.getFields();
         if (keyFields.isEmpty()) {
-            // Todo: return the error telling that key cannot be empty.
-            return Collections.emptyList();
+            return List.of(new SchemaRequirementViolationDto(
+                    schema,
+                    AvroValidatorViolation.SDP_FORMAT_VIOLATION,
+                    AvroSdpViolationType.ILLEGAL_STRUCTURE,
+                    String.format(
+                            "%s must contain at least one field",
+                            schema.getName()
+                    )
+            ));
         }
 
         // Requirement #2: All schema fields are primitives.
-        if (!allSchemaFieldsPrimitives(keyFields)) {
-            // Todo: return the error telling that key cannot be empty.
-            return Collections.emptyList();
+        final var nonPrimitiveKeyFields = getNonPrimitiveKeyFields(keyFields);
+        if (!nonPrimitiveKeyFields.isEmpty()) {
+            return List.of(new SchemaRequirementViolationDto(
+                    schema,
+                    AvroValidatorViolation.SDP_FORMAT_VIOLATION,
+                    AvroSdpViolationType.ILLEGAL_STRUCTURE,
+                    String.format(
+                            "%s key field must be primitive types, found non primitives: %s",
+                            schema.getName(),
+                            String.join(", ", mapFieldsToNames(nonPrimitiveKeyFields))
+                    )
+            ));
         }
 
         return Collections.emptyList();
     }
 
-    private boolean allSchemaFieldsPrimitives(List<Schema.Field> schemaFields) {
+    private List<Schema.Field> getNonPrimitiveKeyFields(List<Schema.Field> schemaFields) {
         return schemaFields
                 .stream()
-                .allMatch(field -> PRIMITIVE_AVRO_TYPES.contains(field.schema().getType()));
+                .filter(field -> !PRIMITIVE_AVRO_TYPES.contains(field.schema().getType()))
+                .toList();
+    }
+
+    private List<String> mapFieldsToNames(List<Schema.Field> schemaFields) {
+        return schemaFields
+                .stream()
+                .map(Schema.Field::name)
+                .toList();
     }
 }

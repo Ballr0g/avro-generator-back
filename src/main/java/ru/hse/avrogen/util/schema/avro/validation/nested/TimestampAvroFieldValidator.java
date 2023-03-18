@@ -1,7 +1,9 @@
 package ru.hse.avrogen.util.schema.avro.validation.nested;
 
 import org.apache.avro.Schema;
-import ru.hse.avrogen.dto.FieldRequirementsDto;
+import ru.hse.avrogen.dto.SchemaRequirementViolationDto;
+import ru.hse.avrogen.util.errors.AvroSdpViolationType;
+import ru.hse.avrogen.util.errors.AvroValidatorViolation;
 import ru.hse.avrogen.util.schema.avro.validation.AvroFieldValidatorBase;
 
 import java.util.Collections;
@@ -32,18 +34,35 @@ public class TimestampAvroFieldValidator extends AvroFieldValidatorBase {
     }
 
     @Override
-    protected List<FieldRequirementsDto> getSchemaSpecificConstraintViolations(Schema schema) {
+    protected List<SchemaRequirementViolationDto> getSchemaSpecificConstraintViolations(Schema schema) {
         // Requirement #1: timestamp is a LogicalType with timestamp-millis value.
         final var millisLogicalType = schema.getLogicalType();
         if (Objects.isNull(millisLogicalType)) {
-            // Todo: return the error telling that the field is not a LogicalType.
-            return Collections.emptyList();
+            return List.of(new SchemaRequirementViolationDto(
+                    schema,
+                    AvroValidatorViolation.SDP_FORMAT_VIOLATION,
+                    AvroSdpViolationType.ILLEGAL_STRUCTURE,
+                    String.format(
+                            "%s must be a logical type",
+                            schema.getName()
+                    )
+            ));
         }
 
         // Requirement #2: the LogicalType is named timestamp-millis.
-        if (!Objects.equals(millisLogicalType.getName(), TIMESTAMP_LOGICAL_FIELD_NAME)) {
-            // Todo: return the error telling that the field is not properly named.
-            return Collections.emptyList();
+        final var millisLogicalTypeName = millisLogicalType.getName();
+        if (!Objects.equals(millisLogicalTypeName, TIMESTAMP_LOGICAL_FIELD_NAME)) {
+            return List.of(new SchemaRequirementViolationDto(
+                    schema,
+                    AvroValidatorViolation.SDP_FORMAT_VIOLATION,
+                    AvroSdpViolationType.ILLEGAL_NAMING,
+                    String.format(
+                            "Expected %s name: %s, got: %s",
+                            schema.getName(),
+                            TIMESTAMP_LOGICAL_FIELD_NAME,
+                            millisLogicalTypeName
+                    )
+            ));
         }
 
         return Collections.emptyList();

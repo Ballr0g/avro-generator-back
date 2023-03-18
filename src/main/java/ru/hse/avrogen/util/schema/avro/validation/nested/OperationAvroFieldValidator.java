@@ -1,7 +1,9 @@
 package ru.hse.avrogen.util.schema.avro.validation.nested;
 
 import org.apache.avro.Schema;
-import ru.hse.avrogen.dto.FieldRequirementsDto;
+import ru.hse.avrogen.dto.SchemaRequirementViolationDto;
+import ru.hse.avrogen.util.errors.AvroSdpViolationType;
+import ru.hse.avrogen.util.errors.AvroValidatorViolation;
 import ru.hse.avrogen.util.schema.avro.validation.AvroFieldValidatorBase;
 
 import java.util.Collections;
@@ -30,12 +32,21 @@ public class OperationAvroFieldValidator extends AvroFieldValidatorBase {
     }
 
     @Override
-    protected List<FieldRequirementsDto> getSchemaSpecificConstraintViolations(Schema schema) {
+    protected List<SchemaRequirementViolationDto> getSchemaSpecificConstraintViolations(Schema schema) {
         // Requirement: enum values are {I, U, D}
         final var operationsEnumValues = schema.getEnumSymbols();
         if (!operationsEnumMatchesValues(operationsEnumValues)) {
-            // Todo: return the error about mismatching enum values.
-            return Collections.emptyList();
+            return List.of(new SchemaRequirementViolationDto(
+                    schema,
+                    AvroValidatorViolation.SDP_FORMAT_VIOLATION,
+                    AvroSdpViolationType.ILLEGAL_STRUCTURE,
+                    String.format(
+                            "Expected %s to contain values {%s}, got: {%s}",
+                            schema.getName(),
+                            String.join(", ", SUPPORTED_OPERATION_ENUM_VALUES),
+                            String.join(", ", operationsEnumValues)
+                    )
+            ));
         }
 
         return Collections.emptyList();
