@@ -1,0 +1,25 @@
+{
+    "type": "enum",
+    "name": "system_record",
+    "symbols" : [ "I", "U", "D" ],
+    "fields":
+    [
+        {
+            "name": "timestamp",
+            "type":
+            {
+                "type": "long",
+                "logicalType": "timestamp-millis"
+            }
+        },
+        {
+            "name": "operation",
+            "type":
+            {
+                "type": "enum",
+                "name" : "operations",
+                "symbols" : [ "I", "U", "D" ]
+            }
+        }
+    ]
+}

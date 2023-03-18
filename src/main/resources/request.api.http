@@ -1,81 +1,82 @@
-# Direct handles to Apicurio, requires docker compose up to work.
+# Direct handles to Apicurio, requires Apicurio Registry running to work (see docker-compose.yaml).
 
 # List all available subjects.
 
-GET http://localhost:9091/apis/ccompat/v6/subjects
+GET http://{{docker_host}}/subjects
 
 ###
 # List all versions under a specific subject.
 
-GET http://localhost:9091/apis/ccompat/v6/subjects/666/versions
+GET http://{{docker_host}}/subjects/{{test_subject}}/versions
 
 ###
 # Get schema by specific subject and version.
 
-GET http://localhost:9091/apis/ccompat/v6/subjects/666/versions/latest
+GET http://{{docker_host}}/subjects/{{test_subject}}/versions/{{test_version}}
 
 ###
-# Add a new schema under the specified subject.
+# Add a new schema under the specified subject - invalid schema.
 
-POST http://localhost:9091/apis/ccompat/v6/subjects/666/versions
+POST http://{{docker_host}}/subjects/{{test_subject}}/versions
 Content-Type: application/json
 
 {
-  "schema": "{ \"type\": \"record\", \"name\": \"test\", \"fields\": [ { \"type\": \"string\", \"name\": \"field\" }, { \"type\": \"int\", \"name\": \"field2\" } ] }"
+  "schema": "{ \"type\": \"record\", \"name\": \"test_invalid\", \"fields\": [ { \"type\": \"string\", \"name\": \"field\" }, { \"type\": \"int\", \"name\": \"field2\" } ] }"
 }
 
 ###
 # Delete all schemas under the specified subject.
 
-DELETE http://localhost:9091/apis/ccompat/v6/subjects/666
+DELETE http://{{docker_host}}/subjects/{{test_subject}}
 
 ###
+# Delete the version selected for given subject.
 
-DELETE http://localhost:9091/apis/ccompat/v6/subjects/666/versions/latest
+DELETE http://{{docker_host}}/subjects/{{test_subject}}/versions/{{test_version}}
 
 ### ------------------------------------------------------------------
 # List all available subjects.
 
-GET http://localhost:8080/avroGenerator/v1/getSubjects
+GET http://{{host}}}/avroGenerator/v1/getSubjects
 
 ###
 # List all versions under a specific subject.
 
-GET http://localhost:8080/avroGenerator/v1/getSchemaVersions/666
+GET http://{{host}}/avroGenerator/v1/getSchemaVersions/{{test_subject}}
 
 ###
 # Get schema by subject and version.
 
-GET http://localhost:8080/avroGenerator/v1/getSchema/666/latest
+GET http://{{host}}/avroGenerator/v1/getSchema/{{test_subject}}/{{test_version}}
 
 ###
 # Add a new schema under the specified subject.
 
-POST http://localhost:8080/avroGenerator/v1/createSchema
+POST http://{{host}}/avroGenerator/v1/createSchema
 Content-Type: application/json
 
 {
-  "subjectName": "666",
+  "subjectName": "{{test_subject}}",
   "schema": "{ \"type\": \"record\", \"name\": \"test\", \"fields\": [ { \"type\": \"string\", \"name\": \"field1\" }, { \"type\": \"int\", \"name\": \"field2\" } ] }"
 }
 
 ###
 # Delete all schemas under the specified subject.
 
-DELETE http://localhost:8080/avroGenerator/v1/deleteSubject
+DELETE http://{{host}}/avroGenerator/v1/deleteSubject
 Content-Type: application/json
 
 {
-  "subjectName": "666"
+  "subjectName": "{{test_subject}}"
 }
 
 ###
 # Delete schema version under the specified subject.
 
-DELETE http://localhost:8080/avroGenerator/v1/deleteSchema
+DELETE http://{{host}}/avroGenerator/v1/deleteSchema
 Content-Type: application/json
 
 {
-  "subjectName": "666",
-  "schemaVersion": "1"
+  "subjectName": "{{test_subject}}",
+  "schemaVersion": "{{test_version}}"
 }

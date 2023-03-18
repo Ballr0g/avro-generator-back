@@ -1,0 +1,23 @@
+{
+    "type": "record",
+    "name": "key_record",
+    "fields":
+    [
+        {
+            "name": "id",
+            "type": "int",
+            "doc": "unique id",
+            "comment": "unique id"
+        },
+        {
+            "name": "system",
+            "type": "string",
+            "doc": "system name"
+        },
+        {
+            "name": "domain",
+            "type": "string",
+            "doc": "domain of the system"
+        }
+    ]
+}
