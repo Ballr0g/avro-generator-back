@@ -42,29 +42,17 @@ class OperationAvroFieldValidatorTest extends AvroFieldValidatorTestBase {
     @ValueSource(strings = {TEST_INVALID_SCHEMA_EXTRA_SYMBOLS, TEST_INVALID_SCHEMA_MISSING_SYMBOLS})
     @DisplayName("Test invalid operations schema with incorrect enum values")
     void invalidOperationSchemaExtraSymbolsFailsTest(String resourceFilePath) {
-        var operationsSchema = getSchemaForResourceFile(resourceFilePath);
-        var validationErrors = operationAvroFieldValidator.validateSchema(operationsSchema);
-
-        assertFalse(validationErrors.isEmpty());
-        assertEquals(1, validationErrors.size());
-
-        var error = validationErrors.get(0);
-        logger.info(error.description());
-        assertEquals(AvroSdpViolationType.ILLEGAL_STRUCTURE, error.sdpCause());
+        assertSingleOperationFormatViolation(resourceFilePath, AvroSdpViolationType.ILLEGAL_STRUCTURE);
     }
 
     @ParameterizedTest
     @ValueSource(strings = TEST_INVALID_SCHEMA_TYPE_MISMATCH)
     @DisplayName("Test invalid operations schema with type mismatch")
     void invalidOperationSchemaIncorrectTypeRecordTest(String resourceFilePath) {
-        var operationsSchema = getSchemaForResourceFile(resourceFilePath);
-        var validationErrors = operationAvroFieldValidator.validateSchema(operationsSchema);
+        assertSingleOperationFormatViolation(resourceFilePath, AvroSdpViolationType.SCHEMA_TYPE_MISMATCH);
+    }
 
-        assertFalse(validationErrors.isEmpty());
-        assertEquals(1, validationErrors.size());
-
-        var error = validationErrors.get(0);
-        logger.info(error.description());
-        assertEquals(AvroSdpViolationType.SCHEMA_TYPE_MISMATCH, error.sdpCause());
+    private void assertSingleOperationFormatViolation(String resourceFilePath, AvroSdpViolationType violationType) {
+        assertSingleSdpFormatViolation(operationAvroFieldValidator, resourceFilePath, violationType);
     }
 }

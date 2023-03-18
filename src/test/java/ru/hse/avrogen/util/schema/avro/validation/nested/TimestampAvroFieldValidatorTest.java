@@ -5,7 +5,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import ru.hse.avrogen.util.errors.AvroSdpViolationType;
-import ru.hse.avrogen.util.errors.AvroValidatorViolation;
 import ru.hse.avrogen.util.schema.avro.validation.AvroFieldValidatorTestBase;
 
 import javax.inject.Inject;
@@ -44,31 +43,17 @@ class TimestampAvroFieldValidatorTest extends AvroFieldValidatorTestBase {
     @ValueSource(strings = {TEST_INVALID_SCHEMA_PRIMITIVE, TEST_INVALID_SCHEMA_RECORD})
     @DisplayName("Test timestamp not a logicalType")
     void invalidTimestampSchemaNonLogicalTypeFailsTest(String resourceFilePath) {
-        var operationsSchema = getSchemaForResourceFile(resourceFilePath);
-        var validationErrors = timestampAvroFieldValidator.validateSchema(operationsSchema);
-
-        assertFalse(validationErrors.isEmpty());
-        assertEquals(1, validationErrors.size());
-
-        var error = validationErrors.get(0);
-        logger.info(error.description());
-        assertEquals(AvroValidatorViolation.SDP_FORMAT_VIOLATION, error.violationType());
-        assertEquals(AvroSdpViolationType.ILLEGAL_STRUCTURE, error.sdpCause());
+        assertSingleTimestampFormatViolation(resourceFilePath, AvroSdpViolationType.ILLEGAL_STRUCTURE);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {TEST_INVALID_SCHEMA_LOGICAL_MICROS, TEST_INVALID_SCHEMA_LOGICAL_DECIMAL})
     @DisplayName("Test timestamp invalid logicalType value")
     void invalidTimestampSchemaIncorrectLogicalTypeFailsTest(String resourceFilePath) {
-        var operationsSchema = getSchemaForResourceFile(resourceFilePath);
-        var validationErrors = timestampAvroFieldValidator.validateSchema(operationsSchema);
+        assertSingleTimestampFormatViolation(resourceFilePath, AvroSdpViolationType.ILLEGAL_NAMING);
+    }
 
-        assertFalse(validationErrors.isEmpty());
-        assertEquals(1, validationErrors.size());
-
-        var error = validationErrors.get(0);
-        logger.info(error.description());
-        assertEquals(AvroValidatorViolation.SDP_FORMAT_VIOLATION, error.violationType());
-        assertEquals(AvroSdpViolationType.ILLEGAL_NAMING, error.sdpCause());
+    private void assertSingleTimestampFormatViolation(String resourceFilePath, AvroSdpViolationType violationType) {
+        assertSingleSdpFormatViolation(timestampAvroFieldValidator, resourceFilePath, violationType);
     }
 }
