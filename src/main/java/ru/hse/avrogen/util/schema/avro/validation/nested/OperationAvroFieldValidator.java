@@ -17,8 +17,8 @@ public class OperationAvroFieldValidator extends AvroFieldValidatorBase {
             Schema.Type.ENUM
     );
 
-    public OperationAvroFieldValidator(List<String> requiredFields) {
-        super(requiredFields);
+    public OperationAvroFieldValidator() {
+        super(Collections.emptyList());
     }
 
     @Override
