@@ -33,7 +33,7 @@ public abstract class AvroFieldValidatorBase {
                             "Expected %s type: %s, got: %s",
                             schema.getName(),
                             String.join(" | ", getAllowedTypeNames()),
-                            schemaType
+                            schemaType.getName()
                     )
             ));
         }
