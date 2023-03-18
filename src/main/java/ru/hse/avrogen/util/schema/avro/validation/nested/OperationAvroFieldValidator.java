@@ -6,11 +6,13 @@ import ru.hse.avrogen.util.errors.AvroSdpViolationType;
 import ru.hse.avrogen.util.errors.AvroValidatorViolation;
 import ru.hse.avrogen.util.schema.avro.validation.AvroFieldValidatorBase;
 
+import javax.enterprise.context.ApplicationScoped;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+@ApplicationScoped
 public class OperationAvroFieldValidator extends AvroFieldValidatorBase {
     private static final Set<String> SUPPORTED_OPERATION_ENUM_VALUES = Set.of("I", "U", "D");
     private static final List<Schema.Type> ALLOWED_OPERATION_SCHEMA_TYPES = List.of(

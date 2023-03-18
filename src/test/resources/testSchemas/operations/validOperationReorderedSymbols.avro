@@ -1,0 +1,3 @@
+{
+    "type" : "enum", "name" : "operations", "symbols" : [ "D", "I", "U" ]
+}
