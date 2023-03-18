@@ -1,0 +1,15 @@
+{
+    "name": "timestamp",
+    "type": "record",
+    "fields":
+    [
+        {
+            "name": "inner_timestamp",
+            "type":
+            {
+                "type": "long",
+                "logicalType": "timestamp-millis"
+            }
+        }
+    ]
+ }

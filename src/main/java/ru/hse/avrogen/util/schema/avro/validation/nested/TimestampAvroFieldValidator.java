@@ -6,21 +6,18 @@ import ru.hse.avrogen.util.errors.AvroSdpViolationType;
 import ru.hse.avrogen.util.errors.AvroValidatorViolation;
 import ru.hse.avrogen.util.schema.avro.validation.AvroFieldValidatorBase;
 
+import javax.enterprise.context.ApplicationScoped;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@ApplicationScoped
 public class TimestampAvroFieldValidator extends AvroFieldValidatorBase {
-    private static final String LOGICAL_TYPE_FIELD_NAME = "logicalType";
     private static final String TIMESTAMP_LOGICAL_FIELD_NAME = "timestamp-millis";
 
-    private static final List<String> TIMESTAMP_SCHEMA_REQUIRED_FIELDS = List.of(
-            LOGICAL_TYPE_FIELD_NAME
-    );
-
     public TimestampAvroFieldValidator() {
-        super(TIMESTAMP_SCHEMA_REQUIRED_FIELDS);
+        super(Collections.emptyList());
     }
 
     @Override
