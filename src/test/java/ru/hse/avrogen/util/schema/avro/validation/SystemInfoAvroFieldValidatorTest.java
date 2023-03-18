@@ -34,8 +34,8 @@ class SystemInfoAvroFieldValidatorTest extends AvroFieldValidatorTestBase {
     @ValueSource(strings = { TEST_VALID_SCHEMA, TEST_VALID_SCHEMA_EXTRA_FIELDS })
     @DisplayName("Test valid system_info schema")
     void validSystemInfoSchemaValidateSuccessTest(String resourceFilePath) {
-        var operationsSchema = getSchemaForResourceFile(resourceFilePath);
-        var validationErrors = systemInfoAvroFieldValidator.validateSchema(operationsSchema);
+        var systemInfoSchema = getSchemaForResourceFile(resourceFilePath);
+        var validationErrors = systemInfoAvroFieldValidator.validateSchema(systemInfoSchema);
 
         assertTrue(validationErrors.isEmpty());
     }

@@ -33,8 +33,8 @@ class TimestampAvroFieldValidatorTest extends AvroFieldValidatorTestBase {
     @ValueSource(strings = TEST_VALID_SCHEMA)
     @DisplayName("Test valid timestamp schema")
     void validTimestampSchemaValidateSuccessTest(String resourceFilePath) {
-        var operationsSchema = getSchemaForResourceFile(resourceFilePath);
-        var validationErrors = timestampAvroFieldValidator.validateSchema(operationsSchema);
+        var timestampSchema = getSchemaForResourceFile(resourceFilePath);
+        var validationErrors = timestampAvroFieldValidator.validateSchema(timestampSchema);
 
         assertTrue(validationErrors.isEmpty());
     }
