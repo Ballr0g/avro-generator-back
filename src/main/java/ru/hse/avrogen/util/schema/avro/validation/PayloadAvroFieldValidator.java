@@ -13,7 +13,6 @@ import java.util.Optional;
 
 @ApplicationScoped
 public class PayloadAvroFieldValidator extends AvroFieldValidatorBase {
-    private static final int RECORD_TYPES_COUNT = 1;
     private static final int OPTIONAL_RECORD_TYPES_COUNT = 2;
     private static final String NESTED_STRUCTURE_IS_KEY_FIELDS = "is_key";
     private static final List<String> NESTED_STRUCTURE_REQUIRED_FIELDS = List.of(
@@ -41,10 +40,9 @@ public class PayloadAvroFieldValidator extends AvroFieldValidatorBase {
     @Override
     protected List<SchemaRequirementViolationDto> getSchemaSpecificConstraintViolations(Schema schema) {
         // Requirement #1: the schema is an optional record (either null or record) or record.
-        // Todo: better way to differentiate record and union?
         final var payloadUnionTypes = schema.isUnion() ? schema.getTypes() : List.of(schema);
         var schemaIsOptionalRecord = isSchemaOptionalRecord(payloadUnionTypes);
-        if (!(schemaIsOptionalRecord || isSchemaRecord(payloadUnionTypes))) {
+        if (!(schemaIsOptionalRecord || schema.getType() == Schema.Type.RECORD)) {
             return List.of(new SchemaRequirementViolationDto(
                     schema,
                     AvroValidatorViolation.SDP_FORMAT_VIOLATION,
@@ -76,10 +74,6 @@ public class PayloadAvroFieldValidator extends AvroFieldValidatorBase {
         return Optional.empty();
     }
 
-    private boolean isSchemaRecord(List<Schema> unionSchemas) {
-        return unionSchemas.size() == RECORD_TYPES_COUNT
-                && unionSchemas.get(0).getType() == Schema.Type.RECORD;
-    }
     private boolean isSchemaOptionalRecord(List<Schema> unionSchemas) {
         return unionSchemas.size() == OPTIONAL_RECORD_TYPES_COUNT
                 && unionSchemas.get(0).getType() == Schema.Type.NULL
