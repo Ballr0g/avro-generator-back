@@ -18,9 +18,14 @@ public abstract class AvroFieldValidatorBase {
 
     // Template method: validates against schema type, required fields and other constraints.
     // Idea: all schemas require type and name + have required fields.
-    public List<SchemaRequirementViolationDto> validateSchema(Schema schema) throws IllegalArgumentException {
+    public List<SchemaRequirementViolationDto> validateSchema(Schema schema) {
         if (Objects.isNull(schema)) {
-            throw new IllegalArgumentException("The schema provided for parsing was null");
+            return List.of(new SchemaRequirementViolationDto(
+                    null,
+                    AvroValidatorViolation.AVRO_SYNTAX_VIOLATION,
+                    AvroSdpViolationType.ILLEGAL_STRUCTURE,
+                    "The avro schema provided for parsing was null"
+            ));
         }
 
         final var schemaType = schema.getType();
