@@ -1,0 +1,44 @@
+{
+    "type": "record",
+    "name": "onecolumn",
+    "namespace": "system.domain",
+    "doc": "test SDP subject",
+    "fields":
+    [
+        {
+            "name": "key",
+            "type":
+            {
+                "type": "record",
+                "name": "key_record",
+                "fields":
+                [
+                    {
+                        "name": "id",
+                        "type": "int",
+                        "doc": "unique id",
+                        "comment": "unique id"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "payload",
+            "type":
+            [
+                "null",
+                {
+                    "type": "record",
+                    "name": "payload_record",
+                    "fields":
+                    [
+                        {
+                            "name": "val",
+                            "type": "string"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
