@@ -36,7 +36,7 @@ public abstract class AvroFieldValidatorBase {
                     AvroSdpViolationType.SCHEMA_TYPE_MISMATCH,
                     String.format(
                             "Expected %s type: %s, got: %s",
-                            schema.getName(),
+                            schema.getFullName(),
                             String.join(" | ", getAllowedTypeNames()),
                             schemaType.getName()
                     )
@@ -52,7 +52,7 @@ public abstract class AvroFieldValidatorBase {
                     AvroSdpViolationType.ILLEGAL_NAMING,
                     String.format(
                             "Expected %s name: %s, got %s",
-                            schema.getName(),
+                            schema.getFullName(),
                             getRequiredName().get(),
                             schemaName)
                     )
@@ -67,7 +67,7 @@ public abstract class AvroFieldValidatorBase {
                             AvroSdpViolationType.MISSING_REQUIRED_FIELD,
                             String.format(
                                     "Missing %s required fields: %s",
-                                    schema.getName(),
+                                    schema.getFullName(),
                                     String.join(", ", missingRequiredFields)
                             )
                     )

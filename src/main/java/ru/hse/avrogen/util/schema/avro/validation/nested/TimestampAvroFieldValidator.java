@@ -41,7 +41,7 @@ public class TimestampAvroFieldValidator extends AvroFieldValidatorBase {
                     AvroSdpViolationType.ILLEGAL_STRUCTURE,
                     String.format(
                             "%s must be a logical type",
-                            schema.getName()
+                            schema.getFullName()
                     )
             ));
         }
@@ -55,7 +55,7 @@ public class TimestampAvroFieldValidator extends AvroFieldValidatorBase {
                     AvroSdpViolationType.ILLEGAL_NAMING,
                     String.format(
                             "Expected %s name: %s, got: %s",
-                            schema.getName(),
+                            schema.getFullName(),
                             TIMESTAMP_LOGICAL_FIELD_NAME,
                             millisLogicalTypeName
                     )

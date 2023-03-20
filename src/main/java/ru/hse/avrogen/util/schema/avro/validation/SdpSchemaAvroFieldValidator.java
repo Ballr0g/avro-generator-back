@@ -49,7 +49,7 @@ public class SdpSchemaAvroFieldValidator extends AvroFieldValidatorBase {
                     AvroSdpViolationType.MISSING_REQUIRED_FIELD,
                     String.format(
                             "Missing %s required field: doc",
-                            schema.getName()
+                            schema.getFullName()
                     )
             ));
         }
@@ -63,7 +63,7 @@ public class SdpSchemaAvroFieldValidator extends AvroFieldValidatorBase {
                     AvroSdpViolationType.MISSING_REQUIRED_FIELD,
                     String.format(
                             "Missing %s required field: namespace",
-                            schema.getName()
+                            schema.getFullName()
                     )
             ));
             return requirementViolationsList;
@@ -77,7 +77,7 @@ public class SdpSchemaAvroFieldValidator extends AvroFieldValidatorBase {
                     AvroSdpViolationType.ILLEGAL_NAMING,
                     String.format(
                             "%s namespace format violation - expected: {system}.{domain}, got: %s",
-                            schema.getName(),
+                            schema.getFullName(),
                             sdpSchemaNamespace
                     )
             ));

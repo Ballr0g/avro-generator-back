@@ -44,7 +44,7 @@ public class OperationAvroFieldValidator extends AvroFieldValidatorBase {
                     AvroSdpViolationType.ILLEGAL_STRUCTURE,
                     String.format(
                             "Expected %s to contain values {%s}, got: {%s}",
-                            schema.getName(),
+                            schema.getFullName(),
                             String.join(", ", SUPPORTED_OPERATION_ENUM_VALUES),
                             String.join(", ", operationsEnumValues)
                     )

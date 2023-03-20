@@ -49,7 +49,7 @@ public class PayloadAvroFieldValidator extends AvroFieldValidatorBase {
                     AvroSdpViolationType.SCHEMA_TYPE_MISMATCH,
                     String.format(
                             "Expected %s type: %s, got: %s",
-                            schema.getName(),
+                            schema.getFullName(),
                             String.join(" | ", ALLOWED_PAYLOAD_SCHEMA_TYPES_TO_NAMES.values()),
                             String.join(" or ", mapSchemaTypesToNames(payloadUnionTypes))
                     )

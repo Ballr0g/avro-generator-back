@@ -47,7 +47,7 @@ public class KeyAvroFieldValidator extends AvroFieldValidatorBase {
                     AvroSdpViolationType.ILLEGAL_STRUCTURE,
                     String.format(
                             "%s must contain at least one field",
-                            schema.getName()
+                            schema.getFullName()
                     )
             ));
         }
@@ -61,7 +61,7 @@ public class KeyAvroFieldValidator extends AvroFieldValidatorBase {
                     AvroSdpViolationType.ILLEGAL_STRUCTURE,
                     String.format(
                             "%s key fields must be primitive types, found non primitives: %s",
-                            schema.getName(),
+                            schema.getFullName(),
                             String.join(", ", mapFieldsToNames(nonPrimitiveKeyFields))
                     )
             ));
