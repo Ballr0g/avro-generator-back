@@ -21,7 +21,7 @@ POST http://{{docker_host}}/subjects/{{test_subject}}/versions
 Content-Type: application/json
 
 {
-  "schema": "{ \"type\": \"record\", \"name\": \"test_invalid\", \"fields\": [ { \"type\": \"string\", \"name\": \"field\" }, { \"type\": \"int\", \"name\": \"field2\" } ] }"
+  "schema": "{\"type\":\"record\",\"name\":\"onecolumn\",\"namespace\":\"system.domain\",\"doc\":\"test SDP subject\",\"fields\":[{\"name\":\"system_info\",\"type\":{\"type\":\"record\",\"name\":\"system_record\",\"fields\":[{\"name\":\"timestamp\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}},{\"name\":\"operation\",\"type\":{\"type\":\"enum\",\"name\":\"operations\",\"symbols\":[\"I\",\"U\",\"D\"]}}]}},{\"name\":\"key\",\"type\":{\"type\":\"record\",\"name\":\"key_record\",\"fields\":[{\"name\":\"id\",\"type\":\"int\",\"doc\":\"unique id\",\"comment\":\"unique id\"}]}},{\"name\":\"payload\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"payload_record\",\"fields\":[{\"name\":\"val\",\"type\":\"string\"}]}]}]}"
 }
 
 ###
@@ -57,7 +57,7 @@ Content-Type: application/json
 
 {
   "subjectName": "{{test_subject}}",
-  "schema": "{ \"type\": \"record\", \"name\": \"test\", \"fields\": [ { \"type\": \"string\", \"name\": \"field1\" }, { \"type\": \"int\", \"name\": \"field2\" } ] }"
+  "schema": "{\"type\":\"record\",\"name\":\"onecolumn\",\"namespace\":\"system.domain\",\"doc\":\"test SDP subject\",\"fields\":[{\"name\":\"system_info\",\"type\":{\"type\":\"record\",\"name\":\"system_record\",\"fields\":[{\"name\":\"timestamp\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}},{\"name\":\"operation\",\"type\":{\"type\":\"enum\",\"name\":\"operations\",\"symbols\":[\"I\",\"U\",\"D\"]}}]}},{\"name\":\"key\",\"type\":{\"type\":\"record\",\"name\":\"key_record\",\"fields\":[{\"name\":\"id\",\"type\":\"int\",\"doc\":\"unique id\",\"comment\":\"unique id\"}]}},{\"name\":\"payload\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"payload_record\",\"fields\":[{\"name\":\"val\",\"type\":\"string\"}]}]}]}"
 }
 
 ###
