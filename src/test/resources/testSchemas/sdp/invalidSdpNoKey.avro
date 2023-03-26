@@ -1,0 +1,55 @@
+{
+    "type": "record",
+    "name": "onecolumn",
+    "namespace": "system.domain",
+    "doc": "test SDP subject",
+    "fields":
+    [
+        {
+            "name": "system_info",
+            "type":
+            {
+                "type": "record",
+                "name": "system_record",
+                "fields":
+                [
+                    {
+                        "name": "timestamp",
+                        "type":
+                        {
+                            "type": "long",
+                            "logicalType": "timestamp-millis"
+                        }
+                    },
+                    {
+                        "name": "operation",
+                        "type":
+                        {
+                            "type": "enum",
+                            "name" : "operations",
+                            "symbols" : [ "I", "U", "D" ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "payload",
+            "type":
+            [
+                "null",
+                {
+                    "type": "record",
+                    "name": "payload_record",
+                    "fields":
+                    [
+                        {
+                            "name": "val",
+                            "type": "string"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

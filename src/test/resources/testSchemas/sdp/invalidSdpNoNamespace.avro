@@ -1,0 +1,71 @@
+{
+    "type": "record",
+    "name": "onecolumn",
+    "doc": "test SDP subject",
+    "fields":
+    [
+        {
+            "name": "system_info",
+            "type":
+            {
+                "type": "record",
+                "name": "system_record",
+                "fields":
+                [
+                    {
+                        "name": "timestamp",
+                        "type":
+                        {
+                            "type": "long",
+                            "logicalType": "timestamp-millis"
+                        }
+                    },
+                    {
+                        "name": "operation",
+                        "type":
+                        {
+                            "type": "enum",
+                            "name" : "operations",
+                            "symbols" : [ "I", "U", "D" ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "key",
+            "type":
+            {
+                "type": "record",
+                "name": "key_record",
+                "fields":
+                [
+                    {
+                        "name": "id",
+                        "type": "int",
+                        "doc": "unique id",
+                        "comment": "unique id"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "payload",
+            "type":
+            [
+                "null",
+                {
+                    "type": "record",
+                    "name": "payload_record",
+                    "fields":
+                    [
+                        {
+                            "name": "val",
+                            "type": "string"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

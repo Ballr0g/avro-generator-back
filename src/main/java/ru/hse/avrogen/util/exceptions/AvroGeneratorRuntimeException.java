@@ -1,25 +1,20 @@
 package ru.hse.avrogen.util.exceptions;
 
-public abstract class AvroGeneratorRuntimeException extends RuntimeException {
+import javax.ws.rs.core.Response;
 
-    public AvroGeneratorRuntimeException() {
-    }
-
-    public AvroGeneratorRuntimeException(String message) {
+public class AvroGeneratorRuntimeException extends RuntimeException {
+    private final Response.Status statusCode;
+    public AvroGeneratorRuntimeException(Response.Status statusCode, String message) {
         super(message);
+        this.statusCode = statusCode;
     }
 
-    public AvroGeneratorRuntimeException(String message, Throwable cause) {
+    public AvroGeneratorRuntimeException(Response.Status statusCode, String message, Throwable cause) {
         super(message, cause);
+        this.statusCode = statusCode;
     }
 
-    public AvroGeneratorRuntimeException(Throwable cause) {
-        super(cause);
+    public Response.Status getStatusCode() {
+        return statusCode;
     }
-
-    public AvroGeneratorRuntimeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
-
-    public abstract String toJSON();
 }

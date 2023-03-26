@@ -4,8 +4,8 @@ import io.smallrye.mutiny.Uni;
 import ru.hse.avrogen.client.SchemaRegistryClient;
 import ru.hse.avrogen.dto.GetSchemaInfoDto;
 import ru.hse.avrogen.dto.PostSchemaResponseDto;
-import ru.hse.avrogen.util.exceptions.ApicurioClientException;
-import ru.hse.avrogen.util.schema.avro.AvroSchemaChecker;
+import ru.hse.avrogen.util.exceptions.validation.AvroGeneratorCheckerException;
+import ru.hse.avrogen.util.schema.avro.AvroSdpSchemaChecker;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -17,7 +17,7 @@ public class AvroCRUDService {
     @Inject
     SchemaRegistryClient apicurioSchemaRegistryClient;
     @Inject
-    AvroSchemaChecker schemaChecker;
+    AvroSdpSchemaChecker schemaChecker;
 
     public Uni<GetSchemaInfoDto> getAvroSchemas(String subjectName, String schemaVersion) {
         return apicurioSchemaRegistryClient.getSchemaByVersion(subjectName, schemaVersion);
@@ -32,10 +32,14 @@ public class AvroCRUDService {
     }
 
     public Uni<PostSchemaResponseDto> createSchema(String subjectName, String schema) {
-        if (!schemaChecker.tryParseJsonToAvro(schema)) {
-            return Uni.createFrom().failure(new ApicurioClientException("Invalid schema format"));
+        final var schemaFormatViolations = schemaChecker.validateSchema(schema);
+        if (!schemaFormatViolations.isEmpty()) {
+            return Uni.createFrom().failure(new AvroGeneratorCheckerException(
+                    schemaFormatViolations,
+                    "Incorrect schema format"
+            ));
         }
-        // SchemaParser: parse schema format.
+
         // SchemaDiscoveryService: check if schema already exists.
         return apicurioSchemaRegistryClient.createSchema(subjectName, schema);
     }

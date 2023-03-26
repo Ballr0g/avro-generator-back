@@ -16,6 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @QuarkusTest
 @QuarkusTestResource(value = ApicurioRegistryTestResource.class, restrictToAnnotatedClass = true)
 public class ApicurioClientComponentTest {
+
+    // Solutions:
+    // 1) @BeforeEach clear test subject ID for each test (using direct container calls).
+    // 2) Unique subjectId for each test.
     @Test
     public void testGetSubjectsEndpoint() {
         given()
@@ -30,7 +34,7 @@ public class ApicurioClientComponentTest {
     public void testPostNewSchemaEndpoint() {
         JsonObject testInput = new JsonObject();
         testInput.put("subjectName", "666");
-        testInput.put("schema", "{ \"type\": \"record\", \"name\": \"test\", \"fields\": [ { \"type\": \"string\", \"name\": \"field\" } ] }");
+        testInput.put("schema", "{\"type\":\"record\",\"name\":\"onecolumn\",\"namespace\":\"system.domain\",\"doc\":\"testSDPsubject\",\"fields\":[{\"name\":\"system_info\",\"type\":{\"type\":\"record\",\"name\":\"system_record\",\"fields\":[{\"name\":\"timestamp\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}},{\"name\":\"operation\",\"type\":{\"type\":\"enum\",\"name\":\"operations\",\"symbols\":[\"I\",\"U\",\"D\"]}}]}},{\"name\":\"key\",\"type\":{\"type\":\"record\",\"name\":\"key_record\",\"fields\":[{\"name\":\"id\",\"type\":\"int\",\"doc\":\"unique id\",\"comment\":\"unique id\"}]}},{\"name\":\"payload\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"payload_record\",\"fields\":[{\"name\":\"val\",\"type\":\"string\"}]}]}]}");
 
         var postResult = given()
                 .when()

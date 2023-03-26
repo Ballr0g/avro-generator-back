@@ -8,12 +8,12 @@ import java.util.Optional;
 
 @ApplicationScoped
 public class SystemInfoAvroFieldValidator extends AvroFieldValidatorBase {
-    private static final String TIMESTAMP_FIELD_NAME = "timestamp";
-    private static final String OPERATION_FIELD_NAME = "operation";
+    public static final String TIMESTAMP_REQUIRED_FIELD_NAME = "timestamp";
+    public static final String OPERATION_REQUIRED_FIELD_NAME = "operation";
 
     private static final List<String> SYSTEM_INFO_SCHEMA_REQUIRED_FIELDS = List.of(
-            TIMESTAMP_FIELD_NAME,
-            OPERATION_FIELD_NAME
+            TIMESTAMP_REQUIRED_FIELD_NAME,
+            OPERATION_REQUIRED_FIELD_NAME
     );
     private static final List<Schema.Type> ALLOWED_SYSTEM_INFO_SCHEMA_TYPES = List.of(
             Schema.Type.RECORD
