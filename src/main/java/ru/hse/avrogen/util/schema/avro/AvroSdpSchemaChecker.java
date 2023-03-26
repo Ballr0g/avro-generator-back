@@ -14,9 +14,8 @@ import ru.hse.avrogen.util.schema.avro.validation.nested.TimestampAvroFieldValid
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 @ApplicationScoped
@@ -35,6 +34,16 @@ public class AvroSdpSchemaChecker {
     PayloadAvroFieldValidator payloadValidator;
 
     public List<SchemaRequirementViolationDto> validateSchema(String jsonSchema) {
+        return validateSchemaWithCheck(jsonSchema, this::validateSdpFormat);
+    }
+
+    // previous is Schema because it is already supposedly parsed by the GET method.
+    public List<SchemaRequirementViolationDto> validateSchemaUpdate(Schema previous, String current) {
+        return validateSchemaWithCheck(current, currentSchema -> validateNoKeyChanges(previous, currentSchema));
+    }
+
+    private List<SchemaRequirementViolationDto> validateSchemaWithCheck(String jsonSchema,
+                                                                        Function<Schema, List<SchemaRequirementViolationDto>> mapper) {
         Schema schema;
         try {
             var avroSchemaParser = new Schema.Parser();
@@ -48,7 +57,7 @@ public class AvroSdpSchemaChecker {
             ));
         }
 
-        return validateSdpFormat(schema);
+        return mapper.apply(schema);
     }
 
     private List<SchemaRequirementViolationDto> validateSdpFormat(Schema schema) {
@@ -82,6 +91,17 @@ public class AvroSdpSchemaChecker {
         if (!(timestampViolations.isEmpty() && operationViolations.isEmpty())) {
             return combineValidationErrors(timestampViolations, operationViolations);
         }
+
+        return Collections.emptyList();
+    }
+
+    private List<SchemaRequirementViolationDto> validateNoKeyChanges(Schema previous, Schema current) {
+        final var previousFields = new HashSet<>(previous.getFields());
+        final var currentFields = new HashSet<>(current.getFields());
+        if (previousFields.containsAll(currentFields) && currentFields.containsAll(previousFields)) {
+
+        }
+
 
         return Collections.emptyList();
     }
