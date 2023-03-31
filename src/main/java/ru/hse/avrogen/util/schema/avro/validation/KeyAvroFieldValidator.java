@@ -42,7 +42,7 @@ public class KeyAvroFieldValidator extends AvroFieldValidatorBase {
         final var keyFields = schema.getFields();
         if (keyFields.isEmpty()) {
             return List.of(new SchemaRequirementViolationDto(
-                    schema,
+                    schema.toString(),
                     AvroValidatorViolation.SDP_FORMAT_VIOLATION,
                     AvroSdpViolationType.ILLEGAL_STRUCTURE,
                     String.format(
@@ -56,7 +56,7 @@ public class KeyAvroFieldValidator extends AvroFieldValidatorBase {
         final var nonPrimitiveKeyFields = getNonPrimitiveKeyFields(keyFields);
         if (!nonPrimitiveKeyFields.isEmpty()) {
             return List.of(new SchemaRequirementViolationDto(
-                    schema,
+                    schema.toString(),
                     AvroValidatorViolation.SDP_FORMAT_VIOLATION,
                     AvroSdpViolationType.ILLEGAL_STRUCTURE,
                     String.format(

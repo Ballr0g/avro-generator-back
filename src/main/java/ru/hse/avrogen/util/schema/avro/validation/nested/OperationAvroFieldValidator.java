@@ -39,7 +39,7 @@ public class OperationAvroFieldValidator extends AvroFieldValidatorBase {
         final var operationsEnumValues = schema.getEnumSymbols();
         if (!operationsEnumMatchesValues(operationsEnumValues)) {
             return List.of(new SchemaRequirementViolationDto(
-                    schema,
+                    schema.toString(),
                     AvroValidatorViolation.SDP_FORMAT_VIOLATION,
                     AvroSdpViolationType.ILLEGAL_STRUCTURE,
                     String.format(

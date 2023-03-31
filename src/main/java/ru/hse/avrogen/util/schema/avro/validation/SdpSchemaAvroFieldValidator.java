@@ -44,7 +44,7 @@ public class SdpSchemaAvroFieldValidator extends AvroFieldValidatorBase {
         // Requirement #1: schema doc presence check.
         if (Objects.isNull(schema.getDoc())) {
             requirementViolationsList.add(new SchemaRequirementViolationDto(
-                    schema,
+                    schema.toString(),
                     AvroValidatorViolation.SDP_FORMAT_VIOLATION,
                     AvroSdpViolationType.MISSING_REQUIRED_FIELD,
                     String.format(
@@ -58,7 +58,7 @@ public class SdpSchemaAvroFieldValidator extends AvroFieldValidatorBase {
         final var sdpSchemaNamespace = schema.getNamespace();
         if (Objects.isNull(sdpSchemaNamespace)) {
             requirementViolationsList.add(new SchemaRequirementViolationDto(
-                    schema,
+                    schema.toString(),
                     AvroValidatorViolation.SDP_FORMAT_VIOLATION,
                     AvroSdpViolationType.MISSING_REQUIRED_FIELD,
                     String.format(
@@ -72,7 +72,7 @@ public class SdpSchemaAvroFieldValidator extends AvroFieldValidatorBase {
         // Requirement #3: schema namespace format check: {system}.{domain}
         if (sdpSchemaNamespace.split("\\.").length != NAMESPACE_SPLIT_BY_DOT_LENGTH) {
             requirementViolationsList.add(new SchemaRequirementViolationDto(
-                    schema,
+                    schema.toString(),
                     AvroValidatorViolation.SDP_FORMAT_VIOLATION,
                     AvroSdpViolationType.ILLEGAL_NAMING,
                     String.format(

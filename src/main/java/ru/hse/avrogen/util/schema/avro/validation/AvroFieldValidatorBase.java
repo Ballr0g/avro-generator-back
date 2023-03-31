@@ -31,7 +31,7 @@ public abstract class AvroFieldValidatorBase {
         final var schemaType = schema.getType();
         if (!requiredTypeMatches(schemaType)) {
             return List.of(new SchemaRequirementViolationDto(
-                    schema,
+                    schema.toString(),
                     AvroValidatorViolation.SDP_FORMAT_VIOLATION,
                     AvroSdpViolationType.SCHEMA_TYPE_MISMATCH,
                     String.format(
@@ -47,7 +47,7 @@ public abstract class AvroFieldValidatorBase {
         final var schemaName = schema.getName();
         if (getRequiredName().isPresent() && !Objects.equals(schemaName, getRequiredName().get())) {
             violationsList.add(new SchemaRequirementViolationDto(
-                    schema,
+                    schema.toString(),
                     AvroValidatorViolation.SDP_FORMAT_VIOLATION,
                     AvroSdpViolationType.ILLEGAL_NAMING,
                     String.format(
@@ -62,7 +62,7 @@ public abstract class AvroFieldValidatorBase {
         final var missingRequiredFields = getMissingRequiredFields(schema);
         if (!missingRequiredFields.isEmpty()) {
             violationsList.add(new SchemaRequirementViolationDto(
-                            schema,
+                            schema.toString(),
                             AvroValidatorViolation.SDP_FORMAT_VIOLATION,
                             AvroSdpViolationType.MISSING_REQUIRED_FIELD,
                             String.format(

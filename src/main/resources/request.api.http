@@ -37,7 +37,7 @@ DELETE http://{{docker_host}}/subjects/{{test_subject}}/versions/{{test_version}
 ### ------------------------------------------------------------------
 # List all available subjects.
 
-GET http://{{host}}}/avroGenerator/v1/getSubjects
+GET http://{{host}}/avroGenerator/v1/getSubjects
 
 ###
 # List all versions under a specific subject.
@@ -63,20 +63,9 @@ Content-Type: application/json
 ###
 # Delete all schemas under the specified subject.
 
-DELETE http://{{host}}/avroGenerator/v1/deleteSubject
-Content-Type: application/json
-
-{
-  "subjectName": "{{test_subject}}"
-}
+DELETE http://{{host}}/avroGenerator/v1/deleteSubject/{{test_subject}}
 
 ###
 # Delete schema version under the specified subject.
 
-DELETE http://{{host}}/avroGenerator/v1/deleteSchema
-Content-Type: application/json
-
-{
-  "subjectName": "{{test_subject}}",
-  "schemaVersion": "{{test_version}}"
-}
+DELETE http://{{host}}/avroGenerator/v1/deleteSchema/{{test_subject}}/{{test_version}}

@@ -44,7 +44,7 @@ public class PayloadAvroFieldValidator extends AvroFieldValidatorBase {
         var schemaIsOptionalRecord = isSchemaOptionalRecord(payloadUnionTypes);
         if (!(schemaIsOptionalRecord || schema.getType() == Schema.Type.RECORD)) {
             return List.of(new SchemaRequirementViolationDto(
-                    schema,
+                    schema.toString(),
                     AvroValidatorViolation.SDP_FORMAT_VIOLATION,
                     AvroSdpViolationType.SCHEMA_TYPE_MISMATCH,
                     String.format(

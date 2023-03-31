@@ -36,7 +36,7 @@ public class TimestampAvroFieldValidator extends AvroFieldValidatorBase {
         final var millisLogicalType = schema.getLogicalType();
         if (Objects.isNull(millisLogicalType)) {
             return List.of(new SchemaRequirementViolationDto(
-                    schema,
+                    schema.toString(),
                     AvroValidatorViolation.SDP_FORMAT_VIOLATION,
                     AvroSdpViolationType.ILLEGAL_STRUCTURE,
                     String.format(
@@ -50,7 +50,7 @@ public class TimestampAvroFieldValidator extends AvroFieldValidatorBase {
         final var millisLogicalTypeName = millisLogicalType.getName();
         if (!Objects.equals(millisLogicalTypeName, TIMESTAMP_LOGICAL_FIELD_NAME)) {
             return List.of(new SchemaRequirementViolationDto(
-                    schema,
+                    schema.toString(),
                     AvroValidatorViolation.SDP_FORMAT_VIOLATION,
                     AvroSdpViolationType.ILLEGAL_NAMING,
                     String.format(
