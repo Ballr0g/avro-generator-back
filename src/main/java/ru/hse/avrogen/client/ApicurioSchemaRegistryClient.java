@@ -2,6 +2,7 @@ package ru.hse.avrogen.client;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
 // Mutiny wrappers provided for Vert.X
@@ -13,11 +14,17 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 import ru.hse.avrogen.dto.GetSchemaInfoDto;
 import ru.hse.avrogen.dto.PostSchemaResponseDto;
+import ru.hse.avrogen.dto.responses.DeleteSchemaVersionResponseDto;
+import ru.hse.avrogen.dto.responses.DeleteSubjectResponseDto;
+import ru.hse.avrogen.dto.responses.GetSchemaVersionsResponseDto;
+import ru.hse.avrogen.dto.responses.GetSubjectsResponseDto;
+import ru.hse.avrogen.util.enums.SchemaPresence;
 import ru.hse.avrogen.util.exceptions.ApicurioClientException;
+import ru.hse.avrogen.util.exceptions.SchemaVersionNotFoundException;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 
 import static ru.hse.avrogen.constants.registry.ConfluentSchemaRegistryApiConstants.*;
 
@@ -47,7 +54,7 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
     }
 
     @Override
-    public Uni<List<String>> getSubjects() {
+    public Uni<GetSubjectsResponseDto> getSubjects() {
         return client
                 .getAbs(getSubjectsUriBuilder.build().toString())
                 .send()
@@ -55,7 +62,7 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
     }
 
     @Override
-    public Uni<List<Integer>> getSchemaVersionsBySubject(String subjectName) {
+    public Uni<GetSchemaVersionsResponseDto> getSchemaVersionsBySubject(String subjectName) {
         return client
                 .getAbs(getSchemasBySubjectUriBuilder.build(subjectName).toString())
                 .send()
@@ -79,7 +86,7 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
     }
 
     @Override
-    public Uni<List<Integer>> deleteSubject(String subjectName) {
+    public Uni<DeleteSubjectResponseDto> deleteSubject(String subjectName) {
         return client
                 .deleteAbs(deleteSubjectUriBuilder.build(subjectName).toString())
                 .send()
@@ -87,7 +94,7 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
     }
 
     @Override
-    public Uni<Integer> deleteVersion(String subjectId, String version) {
+    public Uni<DeleteSchemaVersionResponseDto> deleteVersion(String subjectId, String version) {
         return client
                 .deleteAbs(deleteSchemaUriBuilder.build(subjectId, version).toString())
                 .send()
@@ -104,35 +111,40 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
 
         final var errorMessage = String.format("Error creating schema: %d, caused by: %s",
                 response.statusCode(), response.statusMessage());
-        return Uni.createFrom().failure(new ApicurioClientException(errorMessage));
+        return ApicurioClientException.createUni500ClientException(getRegistryResponseErrorCode(response), errorMessage);
     }
 
-    private <T> Uni<List<String>> mapGetSubjectsResult(HttpResponse<? super T> response) {
+    private <T> Uni<GetSubjectsResponseDto> mapGetSubjectsResult(HttpResponse<? super T> response) {
         if (response.statusCode() == 200) {
-            var result = Arrays.asList(response.bodyAsJson(String[].class));
+            final var result = Arrays.asList(response.bodyAsJson(String[].class));
             logger.info("Successfully received subject info from the Schema Registry.");
-            return Uni.createFrom().item(result);
+            return Uni.createFrom().item(new GetSubjectsResponseDto(result));
         }
 
         logger.warn("Error: unable to retrieve the subjects from " + getSubjectsUriBuilder.build().toString());
         final var errorMessage = String.format("Request to %s returned %d, cause: %s",
                 SUBJECTS_URL, response.statusCode(), response.statusMessage());
 
-        return Uni.createFrom().failure(new ApicurioClientException(errorMessage));
+        return ApicurioClientException.createUni500ClientException(getRegistryResponseErrorCode(response), errorMessage);
     }
 
-    private <T> Uni<List<Integer>> mapGetSchemaVersionsResult(HttpResponse<? super T> response, String subjectName) {
+    private <T> Uni<GetSchemaVersionsResponseDto> mapGetSchemaVersionsResult(HttpResponse<? super T> response, String subjectName) {
         if (response.statusCode() == 200) {
-            var result = Arrays.asList(response.bodyAsJson(Integer[].class));
+            final var result = Arrays.asList(response.bodyAsJson(Integer[].class));
             logger.info(String.format("Successfully received versions for subject %s", subjectName));
-            return Uni.createFrom().item(result);
+            return Uni.createFrom().item(new GetSchemaVersionsResponseDto(result));
+        }
+
+        if (response.statusCode() == 404) {
+            logger.info(String.format("No versions found, subject %s does not exist", subjectName));
+            return Uni.createFrom().item(new GetSchemaVersionsResponseDto(Collections.emptyList()));
         }
 
         logger.warn("Error: unable to retrieve schema versions from "
                 + getSchemasBySubjectUriBuilder.build(subjectName).toString());
         final var errorMessage = String.format("Error on retrieving schema versions: %d, cause by: %s",
                 response.statusCode(), response.statusMessage());
-        return Uni.createFrom().failure(new ApicurioClientException(errorMessage));
+        return ApicurioClientException.createUni500ClientException(getRegistryResponseErrorCode(response), errorMessage);
     }
 
     private <T> Uni<GetSchemaInfoDto> mapGetSchemaResult(HttpResponse<? super T> response,
@@ -151,39 +163,85 @@ public class ApicurioSchemaRegistryClient implements SchemaRegistryClient {
             return Uni.createFrom().item(getSchemaResponse);
         }
 
+        if (response.statusCode() == 404) {
+            logger.info(String.format("Schema version %s under subject %s does not exist", schemaVersion, subjectName));
+            final var errorCode = getRegistryResponseErrorCode(response);
+            return createFailedUniMissingSchema(response, errorCode);
+        }
+
         logger.warn("Error: unable to get schema for request "
                 + getSchemaOfVersionUriBuilder.build(subjectName, schemaVersion).toString());
         final var errorMessage = String.format("Error on retrieving schema version: %d, caused by: %s",
                 response.statusCode(), response.statusMessage());
-        return Uni.createFrom().failure(new ApicurioClientException(errorMessage));
+        return ApicurioClientException.createUni500ClientException(getRegistryResponseErrorCode(response), errorMessage);
     }
 
-    private <T> Uni<List<Integer>> mapDeleteSubjectResult(HttpResponse<? super T> response, String subjectName) {
+    private <T> Uni<DeleteSubjectResponseDto> mapDeleteSubjectResult(HttpResponse<? super T> response, String subjectName) {
         if (response.statusCode() == 200) {
-            var result = Arrays.asList(response.bodyAsJson(Integer[].class));
+            final var result = Arrays.asList(response.bodyAsJson(Integer[].class));
             logger.info(String.format("Successfully deleted subject %s", subjectName));
-            return Uni.createFrom().item(result);
+            return Uni.createFrom().item(new DeleteSubjectResponseDto(SchemaPresence.PRESENT, result));
+        }
+
+        if (response.statusCode() == 404) {
+            logger.info(String.format("Unable to delete subject %s because it does not exist", subjectName));
+            final var errorCode = getRegistryResponseErrorCode(response);
+            return createFailedUniMissingSchema(response, errorCode);
         }
 
         logger.warn("Error: unable to delete subject by calling "
                 + deleteSubjectUriBuilder.build(subjectName).toString());
         final var errorMessage = String.format("Error on deleting subject: %d, caused by: %s",
                 response.statusCode(), response.statusMessage());
-        return Uni.createFrom().failure(new ApicurioClientException(errorMessage));
+        return ApicurioClientException.createUni500ClientException(getRegistryResponseErrorCode(response), errorMessage);
     }
 
-    private <T> Uni<Integer> mapDeleteSchemaResult(HttpResponse<? super T> response,
+    private <T> Uni<DeleteSchemaVersionResponseDto> mapDeleteSchemaResult(HttpResponse<? super T> response,
                                                          String subjectName, String schemaVersion) {
         if (response.statusCode() == 200) {
-            var deletedSchemaVersion = response.bodyAsJson(Integer.class);
+            final var deletedSchemaVersion = response.bodyAsJson(Integer.class);
             logger.info(String.format("Successfully deleted schema version %d", deletedSchemaVersion));
-            return Uni.createFrom().item(deletedSchemaVersion);
+            return Uni.createFrom().item(new DeleteSchemaVersionResponseDto(deletedSchemaVersion));
+        }
+
+        if (response.statusCode() == 404) {
+            logger.info(String.format("Deletion failed: schema version %s under subject %s does not exist",
+                    schemaVersion, subjectName));
+            final var errorCode = getRegistryResponseErrorCode(response);
+            return createFailedUniMissingSchema(response, errorCode);
         }
 
         logger.warn("Error: unable to delete schema by calling "
                 + deleteSchemaUriBuilder.build(subjectName, schemaVersion).toString());
         final var errorMessage = String.format("Error on deleting schema version: %d, caused by: %s",
                 response.statusCode(), response.statusMessage());
-        return Uni.createFrom().failure(new ApicurioClientException(errorMessage));
+        return ApicurioClientException.createUni500ClientException(getRegistryResponseErrorCode(response), errorMessage);
+    }
+
+    private static <T, R> Uni<T> createFailedUniMissingSchema(HttpResponse<? super R> response, int errorCode) {
+        return Uni.createFrom().failure(new SchemaVersionNotFoundException(
+                Response.Status.NOT_FOUND,
+                mapErrorCodeToSchemaPresence(errorCode),
+                errorCode,
+                response.statusMessage()
+        ));
+    }
+
+    private static <T> int getRegistryResponseErrorCode(HttpResponse<? super T> response) {
+        final var responseJson = response.bodyAsJsonObject();
+        if (Objects.isNull(responseJson)) {
+            return 500;
+        }
+
+        return Objects.requireNonNullElse(responseJson.getInteger("error_code"), 500);
+    }
+
+    private static SchemaPresence mapErrorCodeToSchemaPresence(int errorCode) {
+        return switch (errorCode) {
+            case 200 -> SchemaPresence.PRESENT;
+            case 40401 -> SchemaPresence.NO_SUBJECT;
+            case 40402 -> SchemaPresence.NO_VERSION;
+            default -> SchemaPresence.UNEXPECTED;
+        };
     }
 }

@@ -3,13 +3,16 @@ package ru.hse.avrogen.controller;
 import io.smallrye.mutiny.Uni;
 import org.jboss.resteasy.reactive.RestPath;
 import ru.hse.avrogen.dto.*;
+import ru.hse.avrogen.dto.responses.DeleteSchemaVersionResponseDto;
+import ru.hse.avrogen.dto.responses.DeleteSubjectResponseDto;
+import ru.hse.avrogen.dto.responses.GetSchemaVersionsResponseDto;
+import ru.hse.avrogen.dto.responses.GetSubjectsResponseDto;
 import ru.hse.avrogen.service.AvroCRUDService;
 import ru.hse.avrogen.service.SqlToAvroService;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
 
 @Path("/avroGenerator/v1")
 @Produces(MediaType.APPLICATION_JSON)
@@ -29,13 +32,13 @@ public class AvroGeneratorController {
 
     @GET
     @Path("/getSchemaVersions/{subjectName}")
-    public Uni<List<Integer>> getAvroSchemaVersions(@RestPath String subjectName) {
+    public Uni<GetSchemaVersionsResponseDto> getAvroSchemaVersions(@RestPath String subjectName) {
         return avroCRUDService.getSchemasBySubject(subjectName);
     }
 
     @GET
     @Path("/getSubjects")
-    public Uni<List<String>> getSubjects() {
+    public Uni<GetSubjectsResponseDto> getSubjects() {
         return avroCRUDService.getSubjects();
     }
 
@@ -53,15 +56,15 @@ public class AvroGeneratorController {
     }
 
     @DELETE
-    @Path("/deleteSubject")
-    public Uni<List<Integer>> deleteSubject(SchemaSubjectInfoDto schemaSubjectInfoDto) {
-        return avroCRUDService.deleteSubject(schemaSubjectInfoDto.subjectName());
+    @Path("/deleteSubject/{subjectName}")
+    public Uni<DeleteSubjectResponseDto> deleteSubject(@RestPath String subjectName) {
+        return avroCRUDService.deleteSubject(subjectName);
     }
 
     @DELETE
-    @Path("/deleteSchema")
-    public Uni<Integer> deleteSchemaVersion(SchemaSubjectInfoDto schemaSubjectInfoDto) {
-        return avroCRUDService.deleteSchemaVersion(schemaSubjectInfoDto.subjectName(),
-                schemaSubjectInfoDto.schemaVersion());
+    @Path("/deleteSchema/{subjectName}/{schemaVersion}")
+    public Uni<DeleteSchemaVersionResponseDto> deleteSchemaVersion(@RestPath String subjectName,
+                                                                   @RestPath String schemaVersion) {
+        return avroCRUDService.deleteSchemaVersion(subjectName, schemaVersion);
     }
 }

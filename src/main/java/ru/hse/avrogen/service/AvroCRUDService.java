@@ -4,12 +4,15 @@ import io.smallrye.mutiny.Uni;
 import ru.hse.avrogen.client.SchemaRegistryClient;
 import ru.hse.avrogen.dto.GetSchemaInfoDto;
 import ru.hse.avrogen.dto.PostSchemaResponseDto;
+import ru.hse.avrogen.dto.responses.DeleteSchemaVersionResponseDto;
+import ru.hse.avrogen.dto.responses.DeleteSubjectResponseDto;
+import ru.hse.avrogen.dto.responses.GetSchemaVersionsResponseDto;
+import ru.hse.avrogen.dto.responses.GetSubjectsResponseDto;
 import ru.hse.avrogen.util.exceptions.validation.AvroGeneratorCheckerException;
 import ru.hse.avrogen.util.schema.avro.AvroSdpSchemaChecker;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.List;
 
 @ApplicationScoped
 public class AvroCRUDService {
@@ -23,11 +26,11 @@ public class AvroCRUDService {
         return apicurioSchemaRegistryClient.getSchemaByVersion(subjectName, schemaVersion);
     }
 
-    public Uni<List<String>> getSubjects() {
+    public Uni<GetSubjectsResponseDto> getSubjects() {
         return apicurioSchemaRegistryClient.getSubjects();
     }
 
-    public Uni<List<Integer>> getSchemasBySubject(String subjectName) {
+    public Uni<GetSchemaVersionsResponseDto> getSchemasBySubject(String subjectName) {
         return apicurioSchemaRegistryClient.getSchemaVersionsBySubject(subjectName);
     }
 
@@ -44,11 +47,11 @@ public class AvroCRUDService {
         return apicurioSchemaRegistryClient.createSchema(subjectName, schema);
     }
 
-    public Uni<List<Integer>> deleteSubject(String subjectName) {
+    public Uni<DeleteSubjectResponseDto> deleteSubject(String subjectName) {
         return apicurioSchemaRegistryClient.deleteSubject(subjectName);
     }
 
-    public Uni<Integer> deleteSchemaVersion(String subjectName, String schemaVersion) {
+    public Uni<DeleteSchemaVersionResponseDto> deleteSchemaVersion(String subjectName, String schemaVersion) {
         // Validator: check schema version format.
         return apicurioSchemaRegistryClient.deleteVersion(subjectName, schemaVersion);
     }

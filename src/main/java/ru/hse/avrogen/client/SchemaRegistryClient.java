@@ -3,14 +3,15 @@ package ru.hse.avrogen.client;
 import io.smallrye.mutiny.Uni;
 import ru.hse.avrogen.dto.GetSchemaInfoDto;
 import ru.hse.avrogen.dto.PostSchemaResponseDto;
-
-import java.util.List;
+import ru.hse.avrogen.dto.responses.DeleteSchemaVersionResponseDto;
+import ru.hse.avrogen.dto.responses.DeleteSubjectResponseDto;
+import ru.hse.avrogen.dto.responses.GetSchemaVersionsResponseDto;
+import ru.hse.avrogen.dto.responses.GetSubjectsResponseDto;
 
 public interface SchemaRegistryClient {
-    // Todo: pack to DTOs.
     // Lists all subject names as strings.
-    Uni<List<String>> getSubjects();
-    Uni<List<Integer>> getSchemaVersionsBySubject(String subjectName);
+    Uni<GetSubjectsResponseDto> getSubjects();
+    Uni<GetSchemaVersionsResponseDto> getSchemaVersionsBySubject(String subjectName);
 
     Uni<GetSchemaInfoDto> getSchemaByVersion(String subjectName, String version);
 
@@ -19,8 +20,8 @@ public interface SchemaRegistryClient {
     Uni<PostSchemaResponseDto> createSchema(String subjectName, String newSchema);
 
     // Deletes all the versions of a specified schema.
-    Uni<List<Integer>> deleteSubject(String subjectName);
+    Uni<DeleteSubjectResponseDto> deleteSubject(String subjectName);
 
     // Deletes a specific version within the subject.
-    Uni<Integer> deleteVersion(String subjectId, String version);
+    Uni<DeleteSchemaVersionResponseDto> deleteVersion(String subjectId, String version);
 }

@@ -1,25 +1,36 @@
 package ru.hse.avrogen.util.exceptions;
 
-public class ApicurioClientException extends RuntimeException {
+import io.smallrye.mutiny.Uni;
 
-    // Todo: static factory method with string format.
+import javax.ws.rs.core.Response;
 
-    public ApicurioClientException() {
+public class ApicurioClientException extends AvroGeneratorRuntimeException {
+    private final int errorCode;
+
+    public static <T> Uni<T> createUni500ClientException(int errorCode, String message) {
+        return createUniClientException(Response.Status.INTERNAL_SERVER_ERROR, errorCode, message);
     }
 
-    public ApicurioClientException(String message) {
-        super(message);
+    public static <T> Uni<T> createUniClientException(Response.Status status, int errorCode, String message) {
+        return Uni.createFrom().failure(
+                new ApicurioClientException(
+                        status,
+                        errorCode,
+                        message
+                ));
     }
 
-    public ApicurioClientException(String message, Throwable cause) {
-        super(message, cause);
+    public ApicurioClientException(Response.Status statusCode, int errorCode, String message) {
+        super(statusCode, message);
+        this.errorCode = errorCode;
     }
 
-    public ApicurioClientException(Throwable cause) {
-        super(cause);
+    public ApicurioClientException(Response.Status statusCode, int errorCode, String message, Throwable cause) {
+        super(statusCode, message, cause);
+        this.errorCode = errorCode;
     }
 
-    public ApicurioClientException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public int getErrorCode() {
+        return errorCode;
     }
 }
